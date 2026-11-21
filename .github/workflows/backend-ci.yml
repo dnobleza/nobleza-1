@@ -15,6 +15,22 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://app:app@localhost:5432/codehaus_new_project
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: codehaus_new_project
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d codehaus_new_project"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     defaults:
       run:
         working-directory: backend
