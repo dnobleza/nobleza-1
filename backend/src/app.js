@@ -1,10 +1,21 @@
 const express = require('express');
+const cors = require('cors');
+const config = require('./config/env');
 const requestLogger = require('./middlewares/requestLogger.middleware');
 const errorHandler = require('./middlewares/error.middleware');
 const healthRoutes = require('./routes/health.routes');
 const v1Routes = require('./routes/index');
 
 const app = express();
+
+// Must come before the routes, so browsers get the CORS headers (and preflight answers).
+app.use(
+  cors({
+    origin: config.CORS_ORIGIN,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Authorization', 'Content-Type'],
+  })
+);
 
 app.use(express.json());
 app.use(requestLogger);
