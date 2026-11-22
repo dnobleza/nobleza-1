@@ -27,21 +27,23 @@ afterAll(async () => {
 });
 
 describe('POST /api/v1/auth/register - success', () => {
-  it('returns 201 with the safe user fields only', async () => {
+  it('returns 201 with a message and the safe user fields only', async () => {
     const response = await request(app).post(URL).send(validBody());
 
     expect(response.status).toBe(201);
-    expect(response.body.id).toEqual(expect.any(String));
-    expect(response.body.name).toBe('Juan Dela Cruz');
-    expect(response.body.email).toBe('juan@example.com');
-    expect(response.body.mobileNumber).toBe('+639171234567');
-    expect(response.body.createdAt).toEqual(expect.any(String));
+    expect(response.body.message).toBe('Registration successful');
+    expect(response.body.user.id).toEqual(expect.any(String));
+    expect(response.body.user.name).toBe('Juan Dela Cruz');
+    expect(response.body.user.email).toBe('juan@example.com');
+    expect(response.body.user.mobileNumber).toBe('+639171234567');
+    expect(response.body.user.role).toBe('client');
+    expect(response.body.user.createdAt).toEqual(expect.any(String));
 
     // Secrets must never come back.
-    expect(response.body).not.toHaveProperty('password');
-    expect(response.body).not.toHaveProperty('password_hash');
-    expect(response.body).not.toHaveProperty('passwordHash');
-    expect(response.body).not.toHaveProperty('confirmPassword');
+    expect(response.body.user).not.toHaveProperty('password');
+    expect(response.body.user).not.toHaveProperty('password_hash');
+    expect(response.body.user).not.toHaveProperty('passwordHash');
+    expect(response.body.user).not.toHaveProperty('confirmPassword');
   });
 
   it('returns a 09XXXXXXXXX mobile number as +639XXXXXXXXX', async () => {
@@ -50,7 +52,7 @@ describe('POST /api/v1/auth/register - success', () => {
       .send(validBody({ mobileNumber: '09171234567' }));
 
     expect(response.status).toBe(201);
-    expect(response.body.mobileNumber).toBe('+639171234567');
+    expect(response.body.user.mobileNumber).toBe('+639171234567');
   });
 
   it('accepts +639XXXXXXXXX with spaces or dashes', async () => {
@@ -59,7 +61,7 @@ describe('POST /api/v1/auth/register - success', () => {
       .send(validBody({ mobileNumber: '+63 917-123-4567' }));
 
     expect(response.status).toBe(201);
-    expect(response.body.mobileNumber).toBe('+639171234567');
+    expect(response.body.user.mobileNumber).toBe('+639171234567');
   });
 
   it('trims the name and stores the email in lowercase', async () => {
@@ -68,8 +70,40 @@ describe('POST /api/v1/auth/register - success', () => {
       .send(validBody({ name: '  Juan  ', email: '  Juan@Example.COM ' }));
 
     expect(response.status).toBe(201);
-    expect(response.body.name).toBe('Juan');
-    expect(response.body.email).toBe('juan@example.com');
+    expect(response.body.user.name).toBe('Juan');
+    expect(response.body.user.email).toBe('juan@example.com');
+  });
+
+  it('creates the user with role "client"', async () => {
+    const response = await request(app).post(URL).send(validBody());
+
+    expect(response.status).toBe(201);
+    expect(response.body.user.role).toBe('client');
+
+    const result = await pool.query('SELECT role FROM users');
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0].role).toBe('client');
+  });
+
+  it('ignores "role" in the body: still creates a "client" (response and database)', async () => {
+    const response = await request(app).post(URL).send(validBody({ role: 'admin' }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.user.role).toBe('client');
+
+    const result = await pool.query('SELECT role FROM users');
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0].role).toBe('client');
+  });
+
+  it('rejects a row with an unknown role at the database level (CHECK constraint)', async () => {
+    await expect(
+      pool.query(
+        `INSERT INTO users (name, email, mobile_number, password_hash, role)
+         VALUES ($1, $2, $3, $4, $5)`,
+        ['Direct Insert', 'direct@example.com', '+639191234567', 'not-a-real-hash', 'superuser']
+      )
+    ).rejects.toMatchObject({ code: '23514' }); // 23514 = check_violation
   });
 
   it('stores a hashed password, not the plain one', async () => {

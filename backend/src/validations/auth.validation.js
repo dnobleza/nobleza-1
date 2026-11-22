@@ -1,15 +1,7 @@
 const ValidationError = require('../errors/ValidationError');
+const { normalizeMobileNumber } = require('../utils/mobileNumber');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Turn "0917 123-4567" or "+63 917 123 4567" into "+639171234567".
-// Returns null if it is not a Philippine mobile number.
-function normalizeMobileNumber(value) {
-  const compact = value.replace(/[\s-]/g, '');
-  if (/^09\d{9}$/.test(compact)) return '+63' + compact.slice(1);
-  if (/^\+639\d{9}$/.test(compact)) return compact;
-  return null;
-}
 
 // Runs before the controller. On success, replaces req.body with the cleaned values.
 function validateRegister(req, res, next) {
@@ -68,4 +60,43 @@ function validateRegister(req, res, next) {
   next();
 }
 
-module.exports = { validateRegister };
+// Runs before the login controller. No password length rule here on purpose:
+// login should not reveal the password policy. A wrong password simply gets the 401.
+// "identifier" is an email (if it has "@") or a Philippine mobile number.
+// On success, req.body is { email, password } or { mobileNumber, password }.
+function validateLogin(req, res, next) {
+  const body = req.body || {};
+
+  if (typeof body.identifier !== 'string' || body.identifier.trim() === '') {
+    throw new ValidationError('identifier is required');
+  }
+  const identifier = body.identifier.trim();
+  const IDENTIFIER_INVALID = 'identifier must be a valid email or Philippine mobile number';
+  if (identifier.length > 254) {
+    throw new ValidationError(IDENTIFIER_INVALID);
+  }
+
+  let lookup;
+  if (identifier.includes('@')) {
+    const email = identifier.toLowerCase();
+    if (!EMAIL_PATTERN.test(email)) {
+      throw new ValidationError(IDENTIFIER_INVALID);
+    }
+    lookup = { email };
+  } else {
+    const mobileNumber = normalizeMobileNumber(identifier);
+    if (!mobileNumber) {
+      throw new ValidationError(IDENTIFIER_INVALID);
+    }
+    lookup = { mobileNumber };
+  }
+
+  if (typeof body.password !== 'string' || body.password === '') {
+    throw new ValidationError('password is required');
+  }
+
+  req.body = { ...lookup, password: body.password };
+  next();
+}
+
+module.exports = { validateRegister, validateLogin };
