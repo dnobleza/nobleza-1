@@ -26,13 +26,16 @@ function validateRegister(req, res, next) {
     throw new ValidationError('email is not a valid email address');
   }
 
-  if (typeof body.mobileNumber !== 'string' || body.mobileNumber.trim() === '') {
+  if (
+    typeof body.mobileNumber !== 'string' ||
+    body.mobileNumber.trim() === ''
+  ) {
     throw new ValidationError('mobileNumber is required');
   }
   const mobileNumber = normalizeMobileNumber(body.mobileNumber);
   if (!mobileNumber) {
     throw new ValidationError(
-      'mobileNumber must be a Philippine mobile number (09XXXXXXXXX or +639XXXXXXXXX)'
+      'mobileNumber must be a Philippine mobile number (09XXXXXXXXX or +639XXXXXXXXX)',
     );
   }
 
@@ -45,7 +48,9 @@ function validateRegister(req, res, next) {
   // bcrypt only uses the first 72 BYTES. Some characters (like "é" or emoji) are more than 1 byte,
   // so we count bytes, not characters. Otherwise the extra part would be silently ignored.
   if (Buffer.byteLength(body.password, 'utf8') > 72) {
-    throw new ValidationError('password must be at most 72 bytes (some characters use more than 1 byte)');
+    throw new ValidationError(
+      'password must be at most 72 bytes (some characters use more than 1 byte)',
+    );
   }
 
   if (typeof body.confirmPassword !== 'string' || body.confirmPassword === '') {
@@ -68,10 +73,11 @@ function validateLogin(req, res, next) {
   const body = req.body || {};
 
   if (typeof body.identifier !== 'string' || body.identifier.trim() === '') {
-    throw new ValidationError('identifier is required');
+    throw new ValidationError('Email or mobile number is required');
   }
   const identifier = body.identifier.trim();
-  const IDENTIFIER_INVALID = 'identifier must be a valid email or Philippine mobile number';
+  const IDENTIFIER_INVALID =
+    'identifier must be a valid email or Philippine mobile number';
   if (identifier.length > 254) {
     throw new ValidationError(IDENTIFIER_INVALID);
   }
