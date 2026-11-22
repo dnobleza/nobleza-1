@@ -232,3 +232,82 @@ describe('POST /api/v1/auth/register - validation (400)', () => {
     expect(result.rows[0].count).toBe(0);
   });
 });
+
+describe('POST /api/v1/auth/register - extra limits and errors', () => {
+  it('rejects a password longer than 72 bytes even when it has fewer than 72 characters', async () => {
+    // "é" is 2 bytes in UTF-8: 40 characters = 80 bytes. bcrypt would silently ignore the extra bytes.
+    const multiByte = 'é'.repeat(40);
+    const response = await request(app)
+      .post(URL)
+      .send(validBody({ password: multiByte, confirmPassword: multiByte }));
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toContain('password');
+    expect(response.body.error).toContain('72 bytes');
+  });
+
+  it('accepts a password of exactly 72 bytes', async () => {
+    const exact = 'é'.repeat(36); // 36 x 2 bytes = 72 bytes
+    const response = await request(app)
+      .post(URL)
+      .send(validBody({ password: exact, confirmPassword: exact }));
+
+    expect(response.status).toBe(201);
+  });
+
+  it('rejects an email longer than 254 characters', async () => {
+    const longEmail = 'a'.repeat(250) + '@example.com'; // 262 characters
+    const response = await request(app).post(URL).send(validBody({ email: longEmail }));
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toContain('email');
+  });
+
+  it('returns 400 when a field has the wrong type (name: 123)', async () => {
+    const response = await request(app).post(URL).send(validBody({ name: 123 }));
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toContain('name');
+  });
+
+  it('returns 400 "Invalid JSON body" for malformed JSON', async () => {
+    const response = await request(app)
+      .post(URL)
+      .set('Content-Type', 'application/json')
+      .send('{"name": "Juan",');
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ error: 'Invalid JSON body' });
+  });
+
+  it('returns 413 "Request body too large" and does not log it as a server error', async () => {
+    const logger = require('../src/shared/utils/logger');
+    const errorSpy = jest.spyOn(logger, 'error').mockImplementation(() => {});
+
+    const response = await request(app)
+      .post(URL)
+      .send(validBody({ name: 'a'.repeat(200 * 1024) })); // bigger than the 100kb default limit
+
+    expect(response.status).toBe(413);
+    expect(response.body).toEqual({ error: 'Request body too large' });
+    expect(errorSpy).not.toHaveBeenCalled();
+
+    errorSpy.mockRestore();
+  });
+
+  it('lets only one of two simultaneous registrations with the same email succeed', async () => {
+    // Different mobile numbers, same email, sent at the same moment.
+    // Both can pass the "friendly" check, so the database unique index must stop one of them.
+    const [first, second] = await Promise.all([
+      request(app).post(URL).send(validBody({ mobileNumber: '09171234567' })),
+      request(app).post(URL).send(validBody({ mobileNumber: '09181234567' })),
+    ]);
+
+    expect([first.status, second.status].sort()).toEqual([201, 409]);
+    const loser = first.status === 409 ? first : second;
+    expect(loser.body).toEqual({ error: 'Email already registered' });
+
+    const result = await pool.query('SELECT COUNT(*)::int AS count FROM users');
+    expect(result.rows[0].count).toBe(1);
+  });
+});

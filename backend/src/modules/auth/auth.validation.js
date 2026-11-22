@@ -27,6 +27,9 @@ function validateRegister(req, res, next) {
     throw new ValidationError('email is required');
   }
   const email = body.email.trim().toLowerCase();
+  if (email.length > 254) {
+    throw new ValidationError('email must be at most 254 characters');
+  }
   if (!EMAIL_PATTERN.test(email)) {
     throw new ValidationError('email is not a valid email address');
   }
@@ -44,8 +47,13 @@ function validateRegister(req, res, next) {
   if (typeof body.password !== 'string' || body.password === '') {
     throw new ValidationError('password is required');
   }
-  if (body.password.length < 8 || body.password.length > 72) {
-    throw new ValidationError('password must be 8 to 72 characters');
+  if (body.password.length < 8) {
+    throw new ValidationError('password must be at least 8 characters');
+  }
+  // bcrypt only uses the first 72 BYTES. Some characters (like "é" or emoji) are more than 1 byte,
+  // so we count bytes, not characters. Otherwise the extra part would be silently ignored.
+  if (Buffer.byteLength(body.password, 'utf8') > 72) {
+    throw new ValidationError('password must be at most 72 bytes (some characters use more than 1 byte)');
   }
 
   if (typeof body.confirmPassword !== 'string' || body.confirmPassword === '') {
