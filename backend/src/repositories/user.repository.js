@@ -1,4 +1,4 @@
-const { query } = require('../../db/client');
+const { query } = require('../config/db');
 
 // Columns we return. password_hash is never selected.
 const SAFE_COLUMNS = 'id, name, email, mobile_number, created_at';

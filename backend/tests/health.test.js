@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
-const { pool } = require('../src/db/client');
+const { pool } = require('../src/config/db');
 
 // Close the database connections after all tests, so Jest can exit cleanly.
 afterAll(async () => {

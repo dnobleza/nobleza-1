@@ -1,5 +1,5 @@
 const winston = require('winston');
-const { LOG_LEVEL, NODE_ENV } = require('../../config/env');
+const { LOG_LEVEL, NODE_ENV } = require('../config/env');
 
 const isProduction = NODE_ENV === 'production';
 

@@ -1,11 +1,11 @@
 const { PORT } = require('./config/env');
-const logger = require('./shared/utils/logger');
-const db = require('./db/client');
+const logger = require('./utils/logger');
+const healthRepository = require('./repositories/health.repository');
 const app = require('./app');
 
 async function start() {
   try {
-    await db.query('SELECT 1');
+    await healthRepository.ping();
     logger.info('Database connection OK');
   } catch (err) {
     logger.error(`Database connection failed: ${err.message}`);

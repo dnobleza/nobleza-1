@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
-const { pool } = require('../src/db/client');
+const { pool } = require('../src/config/db');
 
 const URL = '/api/v1/auth/register';
 
@@ -281,7 +281,7 @@ describe('POST /api/v1/auth/register - extra limits and errors', () => {
   });
 
   it('returns 413 "Request body too large" and does not log it as a server error', async () => {
-    const logger = require('../src/shared/utils/logger');
+    const logger = require('../src/utils/logger');
     const errorSpy = jest.spyOn(logger, 'error').mockImplementation(() => {});
 
     const response = await request(app)

@@ -1,4 +1,4 @@
-const ValidationError = require('../../shared/errors/ValidationError');
+const ValidationError = require('../errors/ValidationError');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

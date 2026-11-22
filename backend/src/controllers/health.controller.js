@@ -1,4 +1,4 @@
-const healthService = require('./health.service');
+const healthService = require('../services/health.service');
 
 async function getHealth(req, res) {
   const result = await healthService.checkHealth();

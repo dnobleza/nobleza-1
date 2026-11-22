@@ -1,8 +1,8 @@
-const db = require('../../db/client');
+const healthRepository = require('../repositories/health.repository');
 
 async function checkHealth() {
   try {
-    await db.query('SELECT 1');
+    await healthRepository.ping();
     return { status: 'ok', database: 'up' };
   } catch (err) {
     return { status: 'error', database: 'down' };

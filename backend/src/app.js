@@ -1,8 +1,8 @@
 const express = require('express');
-const requestLogger = require('./shared/middleware/requestLogger');
-const errorHandler = require('./shared/middleware/errorHandler');
-const healthRoutes = require('./modules/health/health.routes');
-const authRoutes = require('./modules/auth/auth.routes');
+const requestLogger = require('./middlewares/requestLogger.middleware');
+const errorHandler = require('./middlewares/error.middleware');
+const healthRoutes = require('./routes/health.routes');
+const v1Routes = require('./routes/index');
 
 const app = express();
 
@@ -13,9 +13,7 @@ app.use(requestLogger);
 app.use('/health', healthRoutes);
 
 // All feature endpoints live under /api/v1.
-const v1Router = express.Router();
-v1Router.use('/auth', authRoutes);
-app.use('/api/v1', v1Router);
+app.use('/api/v1', v1Routes);
 
 // Must be last, so it catches errors from everything above.
 app.use(errorHandler);
