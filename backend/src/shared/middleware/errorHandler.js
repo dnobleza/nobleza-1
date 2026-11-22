@@ -15,6 +15,13 @@ function errorHandler(err, req, res, next) {
     return res.status(400).json({ error: 'Invalid JSON body' });
   }
 
+  // Other body-parser errors (body too large, wrong encoding, ...) carry a 4xx status and a type.
+  // These are the client's fault, so send the status with a safe message and do not log a stack trace.
+  if (err.type && err.status >= 400 && err.status < 500) {
+    const message = err.status === 413 ? 'Request body too large' : 'Invalid request body';
+    return res.status(err.status).json({ error: message });
+  }
+
   // Anything else is unexpected: log the real error, hide details from the client.
   logger.error(err.stack || err.message);
   return res.status(500).json({ error: 'Internal server error' });

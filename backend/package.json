@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "pretest": "node -r dotenv/config node_modules/node-pg-migrate/bin/node-pg-migrate.js up -m src/db/migrations --database-url-var TEST_DATABASE_URL",
     "test": "jest",
     "migrate:create": "node -r dotenv/config node_modules/node-pg-migrate/bin/node-pg-migrate.js create -m src/db/migrations --template-file-name src/db/migration-template.js",
     "migrate:up": "node -r dotenv/config node_modules/node-pg-migrate/bin/node-pg-migrate.js up -m src/db/migrations",
