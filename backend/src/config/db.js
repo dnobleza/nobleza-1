@@ -1,6 +1,6 @@
 const { Pool } = require('pg');
-const { DATABASE_URL } = require('../config/env');
-const logger = require('../shared/utils/logger');
+const { DATABASE_URL } = require('./env');
+const logger = require('../utils/logger');
 
 const pool = new Pool({ connectionString: DATABASE_URL });
 
