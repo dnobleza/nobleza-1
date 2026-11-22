@@ -76,7 +76,9 @@ describe('POST /api/v1/auth/login - success', () => {
 
   it('returns a token that verifies with JWT_SECRET and whose sub is the user id', async () => {
     const response = await login(EMAIL);
-    const payload = jwt.verify(response.body.token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+    const payload = jwt.verify(response.body.token, process.env.JWT_SECRET, {
+      algorithms: ['HS256'],
+    });
 
     expect(response.status).toBe(200);
     expect(payload.sub).toBe(response.body.user.id);
@@ -163,14 +165,18 @@ describe('POST /api/v1/auth/login - wrong credentials', () => {
 
 describe('POST /api/v1/auth/login - validation', () => {
   it('returns 400 when identifier is missing', async () => {
-    const response = await request(app).post(LOGIN_URL).send({ password: PASSWORD });
+    const response = await request(app)
+      .post(LOGIN_URL)
+      .send({ password: PASSWORD });
 
     expect(response.status).toBe(400);
-    expect(response.body.error).toBe('identifier is required');
+    expect(response.body.error).toBe('Email or mobile number is required');
   });
 
   it('returns 400 when password is missing', async () => {
-    const response = await request(app).post(LOGIN_URL).send({ identifier: EMAIL });
+    const response = await request(app)
+      .post(LOGIN_URL)
+      .send({ identifier: EMAIL });
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('password is required');
@@ -181,14 +187,17 @@ describe('POST /api/v1/auth/login - validation', () => {
     ['too few digits', '12345'],
     ['wrong mobile prefix', '08171234567'],
     ['bad email (has @)', 'juan@'],
-  ])('returns 400 when identifier is neither email nor mobile: %s', async (label, identifier) => {
-    const response = await login(identifier);
+  ])(
+    'returns 400 when identifier is neither email nor mobile: %s',
+    async (label, identifier) => {
+      const response = await login(identifier);
 
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe(
-      'identifier must be a valid email or Philippine mobile number'
-    );
-  });
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe(
+        'identifier must be a valid email or Philippine mobile number',
+      );
+    },
+  );
 
   it('returns 400 when the fields are not strings', async () => {
     const response = await request(app)
