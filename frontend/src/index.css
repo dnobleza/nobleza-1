@@ -7,6 +7,8 @@
   --color-primary-hover: #1d4ed8;
   --color-accent: #f59e0b;
   --color-accent-soft: #fef3c7;
+  /* Light blue background for badges/notices (mirrors accent-soft) */
+  --color-primary-soft: #dbeafe;
   /* Deeper orange: white text passes WCAG AA (used by the Register button) */
   --color-accent-strong: #c2410c;
   --color-accent-strong-hover: #9a3412;
@@ -47,4 +49,16 @@ h2,
 h3,
 h4 {
   @apply font-heading;
+}
+
+/* Landing page: smooth anchor scrolling, only for people who have not asked for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* The sticky navbar covers the top of a section when its link is clicked, so leave room. */
+section[id] {
+  scroll-margin-top: 6rem;
 }
