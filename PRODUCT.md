@@ -39,7 +39,7 @@ Binding, as stated by Dan:
 
 - Name: **Codehaus** (also written CodeHaus in the logo). App name comes from `VITE_APP_NAME`.
 - Logo: house roof with chimney over a "CH" monogram, orange swoosh underneath. Logo file: `frontend/src/assets/logo/logo.svg`. Favicon: `frontend/public/favicon.svg`.
-- Colors: blue is primary, orange is accent. Exact values not yet chosen.
+- Colors: blue is primary, orange is accent. Color values are defined in DESIGN.md (primary #2563EB, accent #F59E0B).
 - Fonts: Space Grotesk for headings, JetBrains Mono for accents and code.
 - Avoid: gradients, glassmorphism, emoji in headings, generic SaaS hype copy.
 
