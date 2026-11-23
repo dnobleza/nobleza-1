@@ -1,1 +1,40 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/* Codehaus design tokens (see DESIGN.md). Colors from the CodeHaus style guide. */
+@theme {
+  /* Brand */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-accent: #f59e0b;
+  --color-accent-soft: #fef3c7;
+
+  /* Neutrals */
+  --color-ink: #111111;
+  --color-muted: #6b7280;
+  --color-line: #d1d5db;
+  --color-surface-alt: #f3f4f6;
+  --color-background: #f9f6f1;
+  --color-surface: #ffffff;
+
+  /* Status */
+  --color-success: #22c55e;
+  --color-success-text: #15803d;
+  --color-danger: #dc2626;
+  --color-warning: #b45309;
+
+  /* Fonts (installed via @fontsource-variable, imported in main.jsx) */
+  --font-heading:
+    'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+}
+
+body {
+  @apply bg-background text-ink antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-heading;
+}
