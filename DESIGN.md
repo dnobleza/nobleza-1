@@ -17,6 +17,13 @@ Colors come from the CodeHaus style guide.
 | `primary-hover` | `#1D4ED8` | Derived (one shade darker) | Hover/pressed state of primary                       |
 | `accent`        | `#F59E0B` | Style guide: Secondary     | Brand orange: highlights only                        |
 | `accent-soft`   | `#FEF3C7` | Derived (light tint)       | Light orange background for badges/notices           |
+| `accent-strong` | `#C2410C` | Derived (AA-safe orange)   | Orange fill with white text. Auth pages only (see 8) |
+| `accent-strong-hover` | `#9A3412` | Derived (one shade darker) | Hover/pressed state of accent-strong           |
+| `primary-tint`  | `#EFF6FF` | Derived (light blue)       | Auth pages: page and brand panel gradient            |
+| `primary-tint-strong` | `#DBEAFE` | Derived (light blue) | Auth pages: page gradient end                        |
+| `primary-cloud` | `#BFDBFE` | Derived (light blue)       | Auth pages: brand panel gradient, clouds             |
+| `primary-deep`  | `#1E40AF` | Derived (deep blue)        | Auth pages: deep wave (blends into `primary`)        |
+| `navy`          | `#1E3A8A` | Derived (dark blue)        | Auth pages: tagline text                             |
 | `ink`           | `#111111` | Style guide: Neutral 900   | Headings and main text                               |
 | `muted`         | `#6B7280` | Style guide: Neutral 600   | Secondary text, hints, placeholders                  |
 | `line`          | `#D1D5DB` | Style guide: Neutral 300   | Borders, dividers                                    |
@@ -47,10 +54,10 @@ Colors come from the CodeHaus style guide.
 
 **Never**
 
-- Orange for primary buttons with white text (fails contrast)
+- Orange (`accent`) for primary buttons with white text (fails contrast). Only `accent-strong` passes, and only on the auth pages (see section 8)
 - Orange for errors (errors are always `danger` red)
 - Blue and orange side by side at equal weight; blue leads, orange accents
-- Gradients of any kind
+- Gradients of any kind, except the auth pages (see section 8)
 - More than one brand color on a single button or badge
 
 **Neutrals: everything else**
@@ -178,6 +185,7 @@ Pilandok, the mouse-deer in the black hoodie, is the official CodeHaus mascot. P
 - At most **one** mascot per screen. Never on every card or feature tile.
 - Never inside forms, tables or dense dashboards where people are working.
 - Match the pose to the moment: Welcome (first login, empty state), Working (loading, in-progress), Celebrating (request submitted, project complete).
+- Auth pages: one mascot in the brand panel (Login: Working, Register: Celebrating), hidden on mobile. It sits beside the form, never inside it.
 
 ---
 
@@ -187,3 +195,19 @@ Pilandok, the mouse-deer in the black hoodie, is the official CodeHaus mascot. P
 - Errors say what's wrong and how to fix it: "Password must be at least 8 characters."
 - No hype words: seamless, unlock, supercharge, next-level, revolutionary.
 - No emojis in headings, buttons, or labels.
+
+---
+
+## 8. Auth pages (/login, /register)
+
+The sign-in and register screens are the first thing a client sees, so they get a branded split card. These exceptions apply to **these two pages only**. The rest of the app keeps sections 1 to 5.
+
+- **Gradients:** allowed on the page background (`primary-tint` to `primary-tint-strong`) and on the brand panel (`primary-cloud` to `primary-tint`), plus the blue wave. This is the only place a soft gradient is allowed.
+- **Shape:** the card is `rounded-3xl`; inputs are `rounded-xl`; buttons are `rounded-full`.
+- **Heading:** 36px bold (larger than the H3 limit of 28px), centered.
+- **Orange:** the wave, spark lines and swoosh in the brand panel may use `accent`. The Register button uses `accent-strong` (`#C2410C`) with white bold text (about 5.2:1, passes AA). Login keeps the blue `primary` button.
+- **Brand panel:** `md` and up only. On mobile only a small logo shows above the form.
+- **Decoration:** clouds, waves, sparks, plant and code window are inline SVG and `aria-hidden`.
+- **Social sign-in:** buttons stay disabled with a "Coming soon" badge until the backend supports OAuth.
+- **Labels:** inputs use visually hidden (`sr-only`) labels, linked with `htmlFor`/`id`. Placeholders repeat the label text.
+- **No role picker.** Only clients register. The backend sets the role.

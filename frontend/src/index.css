@@ -7,6 +7,16 @@
   --color-primary-hover: #1d4ed8;
   --color-accent: #f59e0b;
   --color-accent-soft: #fef3c7;
+  /* Deeper orange: white text passes WCAG AA (used by the Register button) */
+  --color-accent-strong: #c2410c;
+  --color-accent-strong-hover: #9a3412;
+
+  /* Auth pages only: soft blues for the page and brand panel (see DESIGN.md) */
+  --color-primary-tint: #eff6ff;
+  --color-primary-tint-strong: #dbeafe;
+  --color-primary-cloud: #bfdbfe;
+  --color-primary-deep: #1e40af;
+  --color-navy: #1e3a8a;
 
   /* Neutrals */
   --color-ink: #111111;
