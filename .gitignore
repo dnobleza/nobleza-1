@@ -7,3 +7,6 @@ CLAUDE.md
 .claude/
 .impeccable
 .playwright-mcp
+
+# Local design mockups (not committed)
+docs/design/*.png

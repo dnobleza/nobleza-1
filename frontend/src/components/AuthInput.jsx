@@ -10,6 +10,12 @@ function AuthInput({
   icon: Icon,
   autoComplete,
   inputMode,
+  value,
+  onChange,
+  required,
+  disabled,
+  invalid,
+  describedBy,
   children,
 }) {
   return (
@@ -29,7 +35,19 @@ function AuthInput({
           placeholder={placeholder}
           autoComplete={autoComplete}
           inputMode={inputMode}
-          className="h-12 w-full [@media(max-height:820px)]:h-11 rounded-xl border border-line bg-surface pr-12 pl-12 text-base text-ink transition-colors duration-150 ease-out placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none"
+          // value + onChange make this a "controlled" input: React state owns the text.
+          value={value}
+          onChange={onChange}
+          required={required}
+          disabled={disabled}
+          // aria-invalid / aria-describedby tell screen readers about the error text.
+          aria-invalid={invalid ? 'true' : undefined}
+          aria-describedby={describedBy}
+          className={`h-12 w-full [@media(max-height:820px)]:h-11 rounded-xl border bg-surface pr-12 pl-12 text-base text-ink transition-colors duration-150 ease-out placeholder:text-muted focus:ring-2 focus:outline-none disabled:opacity-60 ${
+            invalid
+              ? 'border-danger focus:border-danger focus:ring-danger/30'
+              : 'border-line focus:border-primary focus:ring-primary/30'
+          }`}
         />
         {children}
       </div>

@@ -163,8 +163,8 @@ function BrandPanel({ variant }) {
       <Clouds />
 
       <div className="relative z-10 flex flex-col items-center px-6 pt-6">
-        <img src={logo} alt="CodeHaus" className="w-52" />
-        <p className="-mt-8 font-heading text-lg font-semibold text-navy">
+        <img src={logo} alt="CodeHaus" className="w-44" />
+        <p className="mt-1 font-heading text-lg font-semibold text-navy">
           Build. Innovate. Grow.
         </p>
       </div>
@@ -213,7 +213,7 @@ function AuthLayout({ variant, children }) {
             <img
               src={logo}
               alt="CodeHaus"
-              className="mx-auto mb-2 w-32 md:hidden"
+              className="mx-auto mb-2 w-28 md:hidden"
             />
             {children}
           </div>

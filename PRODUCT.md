@@ -41,7 +41,7 @@ Binding, as stated by Dan:
 - Logo: house roof with chimney over a "CH" monogram, orange swoosh underneath. Logo file: `frontend/src/assets/logo/logo.svg`. Favicon: `frontend/public/favicon.svg`.
 - Colors: blue is primary, orange is accent. Color values are defined in DESIGN.md (primary #2563EB, accent #F59E0B).
 - Fonts: Space Grotesk for headings, JetBrains Mono for accents and code.
-- Avoid: gradients, glassmorphism, emoji in headings, generic SaaS hype copy.
+- Avoid: gradients (except soft backgrounds on marketing surfaces, see DESIGN.md section 9), glassmorphism, emoji in headings, generic SaaS hype copy.
 
 ## Evidence on Hand
 

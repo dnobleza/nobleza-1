@@ -15,6 +15,7 @@ Colors come from the CodeHaus style guide.
 | --------------- | --------- | -------------------------- | ---------------------------------------------------- |
 | `primary`       | `#2563EB` | Style guide: Primary       | Brand blue: main actions, links, focus               |
 | `primary-hover` | `#1D4ED8` | Derived (one shade darker) | Hover/pressed state of primary                       |
+| `primary-soft`  | `#DBEAFE` | Derived (light tint)       | Light blue background for badges/notices             |
 | `accent`        | `#F59E0B` | Style guide: Secondary     | Brand orange: highlights only                        |
 | `accent-soft`   | `#FEF3C7` | Derived (light tint)       | Light orange background for badges/notices           |
 | `accent-strong` | `#C2410C` | Derived (AA-safe orange)   | Orange fill with white text. Auth pages only (see 8) |
@@ -57,7 +58,7 @@ Colors come from the CodeHaus style guide.
 - Orange (`accent`) for primary buttons with white text (fails contrast). Only `accent-strong` passes, and only on the auth pages (see section 8)
 - Orange for errors (errors are always `danger` red)
 - Blue and orange side by side at equal weight; blue leads, orange accents
-- Gradients of any kind, except the auth pages (see section 8)
+- Gradients of any kind, except soft background gradients on marketing surfaces: the auth pages (section 8) and the landing page (section 9)
 - More than one brand color on a single button or badge
 
 **Neutrals: everything else**
@@ -182,7 +183,7 @@ Respect the user's OS setting. With `prefers-reduced-motion: reduce`:
 Pilandok, the mouse-deer in the black hoodie, is the official CodeHaus mascot. Poses: Welcome, Working, Celebrating.
 
 - Use the mascot for **moments**, not decoration: empty states, onboarding/welcome, success after submitting a request, 404/error pages.
-- At most **one** mascot per screen. Never on every card or feature tile.
+- At most **one** mascot per screen. Never on every card or feature tile. On the marketing landing page (section 9) the rule is **one mascot per viewport**: Working in the hero, Welcome in the final call-to-action.
 - Never inside forms, tables or dense dashboards where people are working.
 - Match the pose to the moment: Welcome (first login, empty state), Working (loading, in-progress), Celebrating (request submitted, project complete).
 - Auth pages: one mascot in the brand panel (Login: Working, Register: Celebrating), hidden on mobile. It sits beside the form, never inside it.
@@ -202,7 +203,7 @@ Pilandok, the mouse-deer in the black hoodie, is the official CodeHaus mascot. P
 
 The sign-in and register screens are the first thing a client sees, so they get a branded split card. These exceptions apply to **these two pages only**. The rest of the app keeps sections 1 to 5.
 
-- **Gradients:** allowed on the page background (`primary-tint` to `primary-tint-strong`) and on the brand panel (`primary-cloud` to `primary-tint`), plus the blue wave. This is the only place a soft gradient is allowed.
+- **Gradients:** allowed on the page background (`primary-tint` to `primary-tint-strong`) and on the brand panel (`primary-cloud` to `primary-tint`), plus the blue wave. Soft gradients are allowed on marketing surfaces only: these two pages and the landing page (section 9).
 - **Shape:** the card is `rounded-3xl`; inputs are `rounded-xl`; buttons are `rounded-full`.
 - **Heading:** 36px bold (larger than the H3 limit of 28px), centered.
 - **Orange:** the wave, spark lines and swoosh in the brand panel may use `accent`. The Register button uses `accent-strong` (`#C2410C`) with white bold text (about 5.2:1, passes AA). Login keeps the blue `primary` button.
@@ -211,3 +212,20 @@ The sign-in and register screens are the first thing a client sees, so they get 
 - **Social sign-in:** buttons stay disabled with a "Coming soon" badge until the backend supports OAuth.
 - **Labels:** inputs use visually hidden (`sr-only`) labels, linked with `htmlFor`/`id`. Placeholders repeat the label text.
 - **No role picker.** Only clients register. The backend sets the role.
+
+---
+
+## 9. Marketing landing (/)
+
+The public landing page is a marketing surface (visitor mode: persuade). These exceptions apply to **the landing page only** (and the auth pages where section 8 says so). The logged-in app keeps sections 1 to 5.
+
+- **Gradients:** soft background gradients allowed on the hero (`primary-tint` to `primary-tint-strong`) and the call-to-action panel (`primary-deep` to `primary`). Never on text, buttons or cards.
+- **Shape:** nav bar and buttons are `rounded-full`; cards are `rounded-2xl`; the call-to-action panel is `rounded-3xl`.
+- **Orange buttons:** `accent-strong` fill with white bold text (about 5.2:1, passes AA). Light `accent` is decoration only (bars, sparks, waves, paw prints), never behind white text. The word "Growth" in the H1 uses `accent-strong` so it passes 3:1 for large text.
+- **Spacing:** sections are about 96px apart on desktop (`py-24`) and 64px on mobile (`py-16`). This is the only place the 48px scale limit is exceeded.
+- **Type:** H1 56/64 ExtraBold and H2 40/48 Bold on desktop; both step down on mobile.
+- **Mascot:** one per viewport (Working in the hero, Welcome in the final call-to-action).
+- **Copy:** the main button says "Start a project" and goes to `/register`. No invented client names, quotes, photos or metrics. Testimonials render only when real, permitted quotes exist.
+- **Images:** all landing images are listed in `src/assets/landingAssets.js`. A missing image falls back to an icon or a branded placeholder.
+- **Motion:** card hover lift (`-translate-y-1`, 150ms, `motion-safe:` only) and color transitions. Smooth anchor scrolling only when reduced motion is not requested. No entrance animations.
+- **Decoration:** clouds, waves, blobs, sparks and paw prints are inline SVG and `aria-hidden`.
