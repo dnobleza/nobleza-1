@@ -2,7 +2,19 @@ import { useState } from 'react';
 import { Eye, EyeOff, Lock } from 'lucide-react';
 import AuthInput from './AuthInput';
 
-function PasswordInput({ id, name, label, placeholder, autoComplete }) {
+function PasswordInput({
+  id,
+  name,
+  label,
+  placeholder,
+  autoComplete,
+  value,
+  onChange,
+  required,
+  disabled,
+  invalid,
+  describedBy,
+}) {
   // State = a value React remembers between renders. When we change it with
   // setVisible, React draws this component again with the new value.
   const [visible, setVisible] = useState(false);
@@ -16,6 +28,12 @@ function PasswordInput({ id, name, label, placeholder, autoComplete }) {
       type={visible ? 'text' : 'password'}
       icon={Lock}
       autoComplete={autoComplete}
+      value={value}
+      onChange={onChange}
+      required={required}
+      disabled={disabled}
+      invalid={invalid}
+      describedBy={describedBy}
     >
       <button
         type="button"
