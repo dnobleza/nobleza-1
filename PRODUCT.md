@@ -38,7 +38,7 @@ Portal run by the builder itself, for Philippine SMB/SME owners: request, tracki
 Binding, as stated by Dan:
 
 - Name: **Codehaus** (also written CodeHaus in the logo). App name comes from `VITE_APP_NAME`.
-- Logo: house roof with chimney over a "CH" monogram, orange swoosh underneath. No logo file in the repo yet (only `frontend/public/favicon.svg`, not confirmed to be this logo).
+- Logo: house roof with chimney over a "CH" monogram, orange swoosh underneath. Logo file: `frontend/src/assets/logo/logo.svg`. Favicon: `frontend/public/favicon.svg`.
 - Colors: blue is primary, orange is accent. Exact values not yet chosen.
 - Fonts: Space Grotesk for headings, JetBrains Mono for accents and code.
 - Avoid: gradients, glassmorphism, emoji in headings, generic SaaS hype copy.
@@ -46,7 +46,6 @@ Binding, as stated by Dan:
 ## Evidence on Hand
 
 - No real portfolio content, client testimonials, case studies, or metrics in the repo. Future work must not fabricate any.
-- No logo asset confirmed in the repo.
 
 ## Product Principles
 
