@@ -4,6 +4,7 @@ import LandingNavbar from '../components/landing/LandingNavbar';
 import HeroSection from '../components/landing/HeroSection';
 import WhyChooseSection from '../components/landing/WhyChooseSection';
 import ServicesSection from '../components/landing/ServicesSection';
+import PortfolioSection from '../components/landing/PortfolioSection';
 
 function LandingPage() {
   return (
@@ -25,9 +26,9 @@ function LandingPage() {
 
           <WhyChooseSection />
           <ServicesSection />
+          <PortfolioSection />
 
-          {/* TEMPORARY placeholders so the navbar links can be tested. Replaced section by section. */}
-          <section id="portfolio" aria-label="Portfolio" className="relative h-[80vh]" />
+          {/* TEMPORARY placeholder so the navbar link can be tested. Replaced by the CTA section. */}
           <section id="contact" aria-label="Contact" className="relative h-[80vh]" />
         </div>
       </main>
