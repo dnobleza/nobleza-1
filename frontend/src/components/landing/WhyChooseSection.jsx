@@ -21,7 +21,7 @@ function WhyChooseSection() {
   const customIcons = landingAssets.featureIcons;
 
   return (
-    <section id="why-choose" aria-labelledby="why-title" className="relative py-16 lg:py-24">
+    <section id="why-choose" aria-labelledby="why-title" className="relative pt-16 lg:pt-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading
           id="why-title"
