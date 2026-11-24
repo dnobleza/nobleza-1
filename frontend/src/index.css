@@ -22,6 +22,10 @@
 
   /* Landing page only (see DESIGN.md section 9) */
   --color-navy-deep: #0b2a6b;
+  --color-sky: #eaf3ff;
+  --color-sky-light: #f5f9ff;
+  /* Secondary text on tinted/blue backgrounds (AA-safe; muted is borderline there) */
+  --color-muted-strong: #4b5563;
 
   /* Neutrals */
   --color-ink: #111111;

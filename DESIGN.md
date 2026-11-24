@@ -25,6 +25,7 @@ Colors come from the CodeHaus style guide.
 | `primary-cloud` | `#BFDBFE` | Derived (light blue)       | Auth pages: brand panel gradient, clouds             |
 | `primary-deep`  | `#1E40AF` | Derived (deep blue)        | Auth pages: deep wave (blends into `primary`)        |
 | `navy`          | `#1E3A8A` | Derived (dark blue)        | Auth pages: tagline text                             |
+| `muted-strong`  | `#4B5563` | Derived (Neutral 700)      | Secondary text on tinted/blue backgrounds (AA-safe)  |
 | `ink`           | `#111111` | Style guide: Neutral 900   | Headings and main text                               |
 | `muted`         | `#6B7280` | Style guide: Neutral 600   | Secondary text, hints, placeholders                  |
 | `line`          | `#D1D5DB` | Style guide: Neutral 300   | Borders, dividers                                    |
