@@ -10,13 +10,17 @@
 // and shows a fallback instead (an icon, or a branded placeholder card).
 
 import pilandokWorking from './mascot/pilandok-working.webp';
-import pilandokWelcome from './mascot/pilandok-welcome.webp';
+import pilandokCelebrating from './mascot/pilandok-celebrating.webp';
+import heroBackgroundImage from './landing/hero-background.webp';
 
 const landingAssets = {
   // Big mascot in the hero (right side).
-  heroMascot: pilandokWorking,
+  heroMascot: pilandokCelebrating,
   // Mascot on the left edge of the final call-to-action panel.
-  ctaMascot: pilandokWelcome,
+  ctaMascot: pilandokWorking,
+  // Full illustrated hero background (sky, office house, skyline, hill, clouds).
+  // Generated with Figma AI. While null, the hero uses the coded SVG scene.
+  heroBackground: heroBackgroundImage,
   // Office/house picture behind the hero mascot. Not available yet.
   heroHouse: null,
 

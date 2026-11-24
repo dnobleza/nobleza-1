@@ -25,6 +25,10 @@ Colors come from the CodeHaus style guide.
 | `primary-cloud` | `#BFDBFE` | Derived (light blue)       | Auth pages: brand panel gradient, clouds             |
 | `primary-deep`  | `#1E40AF` | Derived (deep blue)        | Auth pages: deep wave (blends into `primary`)        |
 | `navy`          | `#1E3A8A` | Derived (dark blue)        | Auth pages: tagline text                             |
+| `navy-deep`     | `#0B2A6B` | Derived (very dark blue)   | Landing page only: headings, footer background       |
+| `sky`           | `#EAF3FF` | Derived (light blue)       | Landing page only: page background gradient, hero fade |
+| `sky-light`     | `#F5F9FF` | Derived (lighter blue)     | Landing page only: page background gradient (middle) |
+| `muted-strong`  | `#4B5563` | Derived (Neutral 700)      | Secondary text on tinted/blue backgrounds (AA-safe)  |
 | `ink`           | `#111111` | Style guide: Neutral 900   | Headings and main text                               |
 | `muted`         | `#6B7280` | Style guide: Neutral 600   | Secondary text, hints, placeholders                  |
 | `line`          | `#D1D5DB` | Style guide: Neutral 300   | Borders, dividers                                    |
@@ -183,7 +187,7 @@ Respect the user's OS setting. With `prefers-reduced-motion: reduce`:
 Pilandok, the mouse-deer in the black hoodie, is the official CodeHaus mascot. Poses: Welcome, Working, Celebrating.
 
 - Use the mascot for **moments**, not decoration: empty states, onboarding/welcome, success after submitting a request, 404/error pages.
-- At most **one** mascot per screen. Never on every card or feature tile. On the marketing landing page (section 9) the rule is **one mascot per viewport**: Working in the hero, Welcome in the final call-to-action.
+- At most **one** mascot per screen. Never on every card or feature tile. On the marketing landing page (section 9) the rule is **one mascot per viewport**: Celebrating in the hero, Working (with laptop) in the final call-to-action.
 - Never inside forms, tables or dense dashboards where people are working.
 - Match the pose to the moment: Welcome (first login, empty state), Working (loading, in-progress), Celebrating (request submitted, project complete).
 - Auth pages: one mascot in the brand panel (Login: Working, Register: Celebrating), hidden on mobile. It sits beside the form, never inside it.
@@ -219,13 +223,19 @@ The sign-in and register screens are the first thing a client sees, so they get 
 
 The public landing page is a marketing surface (visitor mode: persuade). These exceptions apply to **the landing page only** (and the auth pages where section 8 says so). The logged-in app keeps sections 1 to 5.
 
-- **Gradients:** soft background gradients allowed on the hero (`primary-tint` to `primary-tint-strong`) and the call-to-action panel (`primary-deep` to `primary`). Never on text, buttons or cards.
+- **Hero background image:** the hero uses one illustrated picture (`heroBackground`, sky, office house, skyline, grassy hill), shown with `background-size: cover` and `background-position: center bottom`, with a soft fade to `sky` at the bottom. The file is used as-is: no crop, recolor, filter or overlay. While `heroBackground` is `null`, a coded SVG scene (`HeroBackground.jsx`) takes its place. The hero sits under the sticky navbar (pulled up with a negative top margin). On narrow screens `cover` crops the picture, so the house may be out of view.
+- **Page background:** below the hero, sections sit on a soft `sky` / `sky-light` gradient with white cloud shapes at the left and right edges (decoration, `aria-hidden`).
+- **Gradients:** soft background gradients allowed on the hero fade, the page background (`sky` to `sky-light`) and the call-to-action panel (`primary-deep` to `primary`). Never on text, buttons or cards.
+- **Cards:** white at about 82% opacity with a white 1px border, `rounded-2xl` and a soft blue shadow (`0 10px 30px -12px rgb(37 99 235 / 0.25)`), so the sky shows through very slightly. This replaces the `line` border and `shadow-sm` of section 3 on this page only. Secondary text on cards uses `muted-strong`.
 - **Shape:** nav bar and buttons are `rounded-full`; cards are `rounded-2xl`; the call-to-action panel is `rounded-3xl`.
-- **Orange buttons:** `accent-strong` fill with white bold text (about 5.2:1, passes AA). Light `accent` is decoration only (bars, sparks, waves, paw prints), never behind white text. The word "Growth" in the H1 uses `accent-strong` so it passes 3:1 for large text.
-- **Spacing:** sections are about 96px apart on desktop (`py-24`) and 64px on mobile (`py-16`). This is the only place the 48px scale limit is exceeded.
-- **Type:** H1 56/64 ExtraBold and H2 40/48 Bold on desktop; both step down on mobile.
-- **Mascot:** one per viewport (Working in the hero, Welcome in the final call-to-action).
-- **Copy:** the main button says "Start a project" and goes to `/register`. No invented client names, quotes, photos or metrics. Testimonials render only when real, permitted quotes exist.
+- **Headings:** `navy-deep` (not `ink`) for the H1, H2 and card titles.
+- **Orange buttons:** `accent-strong` fill with white bold text (about 5.2:1, passes AA). Light `accent` is decoration only (bars, sparks, waves, paw prints), never behind white text. The word "Growth" in the H1 uses `accent-strong`: it measures about 3.8:1 over the hero picture. The lighter `#EA580C` measured about 2.6:1 there and fails the 3:1 minimum for large text.
+- **Spacing:** sections are about 96px apart on desktop (`pt-24`) and 64px on mobile (`pt-16`). Each section owns its top spacing. This is the only place the 48px scale limit is exceeded.
+- **Type:** H1 60/66 Bold and H2 40/48 Bold on desktop; both step down on mobile (H1 40/46, H2 32/40). This is bolder in size and lighter in weight than the section 2 scale (56/64 ExtraBold) on purpose, to match the approved preview.
+- **Mascot:** one per viewport (Celebrating in the hero, standing on the hill left of the house; Working with laptop in the final call-to-action, overlapping the panel's top-left edge, hidden below `md`). Both are decorative (`alt=""`).
+- **Copy:** the main button says "Start a project" and goes to `/register`. No invented client names, quotes, photos or metrics. Testimonials render only when real, permitted quotes exist (the component returns nothing while its list is empty).
+- **Portfolio:** only real projects. A "Learn More" button appears only when a project has a `url`; it opens in a new tab (`rel="noopener noreferrer"`) and has an accessible label. No dead `href="#"` links.
+- **Footer:** `navy-deep` background with a wavy top edge, the logo on a small white badge, anchor links, and a GitHub link (inline SVG, because the icon set has no brand icons). The focus ring is white on this dark background.
 - **Images:** all landing images are listed in `src/assets/landingAssets.js`. A missing image falls back to an icon or a branded placeholder.
 - **Motion:** card hover lift (`-translate-y-1`, 150ms, `motion-safe:` only) and color transitions. Smooth anchor scrolling only when reduced motion is not requested. No entrance animations.
 - **Decoration:** clouds, waves, blobs, sparks and paw prints are inline SVG and `aria-hidden`.

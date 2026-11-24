@@ -10,3 +10,5 @@ CLAUDE.md
 
 # Local design mockups (not committed)
 docs/design/*.png
+docs/design/*.html
+docs/handoff-*.md
