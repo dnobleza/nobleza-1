@@ -1,0 +1,129 @@
+import { Link } from 'react-router-dom';
+import { ArrowRight, CirclePlay, Headphones, Monitor, Rocket, Zap } from 'lucide-react';
+import landingAssets from '../../assets/landingAssets';
+import HeroBackground from './HeroBackground';
+import { focusRing } from './focusRing';
+
+// The three small feature lines under the buttons.
+// "Icon" starts with a capital letter because React treats it as a component.
+const MINI_FEATURES = [
+  { Icon: Monitor, lines: ['Modern Web', 'Solutions'] },
+  { Icon: Zap, lines: ['Reliable', 'Performance'] },
+  { Icon: Headphones, lines: ['Dedicated', 'Support'] },
+];
+
+function HeroSection() {
+  const { heroBackground, heroMascot } = landingAssets;
+
+  // The background is an image, so we set it with the style prop (plain CSS in JS).
+  // Tailwind classes cannot hold a value that is only known at runtime.
+  // Layer 1 (top): a fade from clear to light blue at the bottom, so the hero melts into the next section.
+  // Layer 2: the picture itself, untouched: "cover" fills the area, "center bottom" keeps the hill and house in view.
+  const backgroundStyle = heroBackground
+    ? {
+        backgroundImage: `linear-gradient(to bottom, transparent 82%, #eaf3ff 100%), url(${heroBackground})`,
+        backgroundSize: 'auto, cover',
+        backgroundPosition: 'center, center bottom',
+        backgroundRepeat: 'no-repeat',
+      }
+    : { backgroundImage: 'linear-gradient(to bottom, transparent 82%, #eaf3ff 100%)' };
+
+  return (
+    // -mt-[88px] pulls the hero up behind the sticky navbar. aria-labelledby points to the h1's id.
+    <section
+      id="home"
+      aria-labelledby="hero-title"
+      style={backgroundStyle}
+      className="relative -mt-[88px] overflow-hidden bg-[#bfe0fa] px-4 pb-24 pt-32 sm:px-6 lg:pb-40 lg:pt-[140px]"
+    >
+      {!heroBackground && <HeroBackground />}
+
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[1.1fr_1fr]">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-sm font-semibold text-primary-deep shadow-sm">
+            <Rocket aria-hidden="true" className="size-4" />
+            Build. Innovate. Grow.
+          </span>
+
+          <h1
+            id="hero-title"
+            className="mb-4 mt-5 text-[40px] font-bold leading-[46px] tracking-tight text-navy-deep sm:text-[52px] sm:leading-[58px] lg:text-[60px] lg:leading-[66px]"
+          >
+            Your Digital
+            <br />
+            <span className="text-accent-strong">Growth</span> Partner
+          </h1>
+
+          <p className="max-w-md text-lg leading-7 text-gray-700">
+            From stunning websites to powerful software, CodeHaus helps you turn ideas into real
+            solutions.
+          </p>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link
+              to="/register"
+              className={`inline-flex items-center gap-2 rounded-full bg-accent-strong px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-accent-strong-hover ${focusRing}`}
+            >
+              Start a project
+              <ArrowRight aria-hidden="true" className="size-4.5" />
+            </Link>
+            <a
+              href="#portfolio"
+              className={`inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-ink shadow-sm transition-colors duration-150 hover:bg-primary-soft ${focusRing}`}
+            >
+              <CirclePlay aria-hidden="true" className="size-5 text-primary-deep" />
+              View Our Work
+            </a>
+          </div>
+
+          {/* The dividers are borders on every item except the last (last:border-0). */}
+          <ul className="mt-8 flex flex-wrap gap-y-4 text-sm text-gray-700">
+            {MINI_FEATURES.map(({ Icon, lines }) => (
+              <li
+                key={lines[0]}
+                className="flex items-center gap-2 border-r border-primary-cloud pr-4 last:border-0 sm:pr-5 [&:not(:first-child)]:pl-4 sm:[&:not(:first-child)]:pl-5"
+              >
+                <Icon aria-hidden="true" className="size-5.5 shrink-0 text-primary-deep" />
+                <span>
+                  {lines[0]}
+                  <br />
+                  {lines[1]}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Mascot: below the text on mobile, on the grassy hill (left of the house) on desktop. */}
+        <div className="relative mt-4 flex items-end justify-center lg:mt-[90px] lg:justify-start">
+          {heroMascot && (
+            <img
+              src={heroMascot}
+              alt=""
+              width={600}
+              height={600}
+              loading="eager"
+              className="relative w-56 max-w-full drop-shadow-[0_18px_18px_rgb(30_64_175/0.18)] sm:w-72 lg:-ml-5 lg:w-[360px]"
+            />
+          )}
+          {/* Three orange spark lines near the raised fist. */}
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 50 60"
+            fill="none"
+            stroke="#F59E0B"
+            strokeWidth="5"
+            strokeLinecap="round"
+            className="absolute left-[58%] top-0 hidden w-[60px] lg:block"
+          >
+            <path d="M18 6 L28 22" />
+            <path d="M30 30 L46 32" />
+            <path d="M28 46 L42 54" />
+          </svg>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default HeroSection;

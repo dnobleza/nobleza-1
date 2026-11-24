@@ -20,6 +20,9 @@
   --color-primary-deep: #1e40af;
   --color-navy: #1e3a8a;
 
+  /* Landing page only (see DESIGN.md section 9) */
+  --color-navy-deep: #0b2a6b;
+
   /* Neutrals */
   --color-ink: #111111;
   --color-muted: #6b7280;
