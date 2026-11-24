@@ -17,7 +17,7 @@ function SectionHeading({ id, title, subtitle, centered = false }) {
       >
         {title}
       </h2>
-      {subtitle && <p className="mt-2.5 text-lg text-muted-strong">{subtitle}</p>}
+      {subtitle && <p className="mt-2.5 text-balance text-lg text-muted-strong">{subtitle}</p>}
     </div>
   );
 }

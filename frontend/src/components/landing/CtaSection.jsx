@@ -41,14 +41,14 @@ function CtaSection() {
             <div>
               <h2
                 id="cta-title"
-                className="text-3xl font-bold leading-9 lg:text-[34px] lg:leading-[42px]"
+                className="text-balance text-3xl font-bold leading-9 lg:text-[34px] lg:leading-[42px]"
               >
                 Let&apos;s Build Something Great Together!
               </h2>
               <p className="mt-2 text-lg">Turn your ideas into reality with CodeHaus.</p>
               <a
                 href="mailto:codehausdevelopment@gmail.com"
-                className={`mt-3.5 inline-block rounded text-[15px] underline ${focusRing} focus-visible:outline-white`}
+                className={`mt-1 inline-block rounded py-3 text-[15px] underline ${focusRing} focus-visible:outline-white`}
               >
                 codehausdevelopment@gmail.com
               </a>
