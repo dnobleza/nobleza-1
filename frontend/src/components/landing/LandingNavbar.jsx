@@ -84,9 +84,9 @@ function LandingNavbar() {
       <div className="mx-auto max-w-6xl">
         <nav
           aria-label="Main"
-          className="flex items-center justify-between gap-4 rounded-full bg-surface px-4 py-3 shadow-md sm:px-6"
+          className="flex items-center justify-between gap-4 rounded-full bg-surface px-4 py-3 shadow-md sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr]"
         >
-          <a href="#home" className={`shrink-0 rounded-full ${focusRing}`}>
+          <a href="#home" className={`ml-2 shrink-0 justify-self-start rounded-full lg:ml-4 ${focusRing}`}>
             {/* Sized by height so the bar stays about 64px tall; width follows the logo's shape. */}
             <img
               src={logo}
@@ -118,7 +118,7 @@ function LandingNavbar() {
             ))}
           </ul>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 justify-self-end">
             {/* Desktop buttons */}
             <Link
               to="/login"
