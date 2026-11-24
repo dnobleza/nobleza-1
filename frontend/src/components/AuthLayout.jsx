@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import logo from '../assets/logo/logo.svg';
+import { focusRing } from './landing/focusRing';
 import pilandokWorking from '../assets/mascot/pilandok-working.webp';
 import pilandokCelebrating from '../assets/mascot/pilandok-celebrating.webp';
 
@@ -159,11 +162,17 @@ function BrandPanel({ variant }) {
   const isRegister = variant === 'register';
 
   return (
-    <div className="relative hidden flex-col items-center overflow-hidden bg-linear-to-b from-primary-cloud to-primary-tint md:flex">
+    // md:order-first: this panel comes later in the page code (so keyboard users reach the
+    // form first) but is drawn first, on the left, from md up.
+    <div className="relative hidden flex-col items-center overflow-hidden bg-linear-to-b from-primary-cloud to-primary-tint md:order-first md:flex">
       <Clouds />
 
       <div className="relative z-10 flex flex-col items-center px-6 pt-6">
-        <img src={logo} alt="CodeHaus" className="w-44" />
+        {/* The link has no visible text, so aria-label gives it a name. The image inside is
+            then decorative (alt=""), otherwise a screen reader would say the name twice. */}
+        <Link to="/" aria-label="CodeHaus home" className={`flex rounded-lg ${focusRing}`}>
+          <img src={logo} alt="" className="w-44" />
+        </Link>
         <p className="mt-1 font-heading text-lg font-semibold text-navy">
           Build. Innovate. Grow.
         </p>
@@ -205,19 +214,32 @@ function AuthLayout({ variant, children }) {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-linear-to-b from-primary-tint to-primary-tint-strong p-4 md:h-dvh md:p-6">
       <div className="grid w-full max-w-4xl overflow-hidden rounded-3xl bg-surface shadow-[0_24px_64px_-16px_rgb(37_99_235/0.25)] md:h-[min(720px,calc(100dvh-3rem))] md:grid-cols-[48fr_52fr] md:grid-rows-1">
-        <BrandPanel variant={variant} />
-
-        <div className="flex justify-center overflow-y-auto p-6 md:p-12">
+        {/* "relative" makes this panel the anchor for the absolutely placed Back link below. */}
+        <div className="relative flex justify-center overflow-y-auto p-6 md:p-12">
           <div className="my-auto w-full max-w-[400px]">
+            {/* On phones it sits in the normal flow above the logo. From md up it is "absolute":
+                it floats inside the panel's 48px top padding (left-12 lines it up with the form),
+                so it adds no height and the form still fits the screen without scrolling. */}
+            <Link
+              to="/"
+              className={`inline-flex min-h-11 items-center gap-1.5 rounded-full text-sm font-medium text-muted-strong transition-colors duration-150 hover:text-primary md:absolute md:top-1 md:left-12 ${focusRing}`}
+            >
+              <ArrowLeft aria-hidden="true" className="size-4" />
+              Back to home
+            </Link>
             {/* Mobile only: the brand panel is hidden, so show a small logo */}
-            <img
-              src={logo}
-              alt="CodeHaus"
-              className="mx-auto mb-2 w-28 md:hidden"
-            />
+            <Link
+              to="/"
+              aria-label="CodeHaus home"
+              className={`mx-auto mb-2 flex w-28 rounded-lg md:hidden ${focusRing}`}
+            >
+              <img src={logo} alt="" className="w-full" />
+            </Link>
             {children}
           </div>
         </div>
+
+        <BrandPanel variant={variant} />
       </div>
     </main>
   );
