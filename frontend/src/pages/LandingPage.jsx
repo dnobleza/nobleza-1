@@ -7,6 +7,7 @@ import ServicesSection from '../components/landing/ServicesSection';
 import PortfolioSection from '../components/landing/PortfolioSection';
 import Testimonials from '../components/landing/Testimonials';
 import CtaSection from '../components/landing/CtaSection';
+import LandingFooter from '../components/landing/LandingFooter';
 
 function LandingPage() {
   return (
@@ -33,6 +34,7 @@ function LandingPage() {
           <CtaSection />
         </div>
       </main>
+      <LandingFooter />
     </>
   );
 }
