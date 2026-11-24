@@ -76,8 +76,10 @@ function HeroSection() {
             </a>
           </div>
 
-          {/* The dividers are borders on every item except the last (last:border-0). */}
-          <ul className="mt-8 flex flex-wrap gap-y-4 text-sm text-gray-700">
+          {/* Hidden on phones (hidden sm:flex): small text over the skyline is hard to read there,
+              and the next section says the same things. The dividers are borders on every item
+              except the last (last:border-0). */}
+          <ul className="mt-8 hidden flex-wrap gap-y-4 text-sm text-gray-700 sm:flex">
             {MINI_FEATURES.map(({ Icon, lines }) => (
               <li
                 key={lines[0]}

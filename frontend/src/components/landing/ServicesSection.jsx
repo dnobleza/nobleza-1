@@ -42,21 +42,28 @@ function ServicesSection() {
           </a>
         </div>
 
-        {/* 1 column on phones, 2 on tablets, 3 on desktop (3 x 2 = six cards). */}
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* 1 column on phones, 2 on tablets, 3 on desktop (3 x 2 = six cards).
+            Below md each card is compact: icon on the left, text on the right (flex).
+            From md up it switches back to the tall, centered card (md:block, md:text-center). */}
+        <ul className="grid gap-3 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
           {SERVICES.map(({ key, Icon, tone, title, text }) => (
-            <li key={key} className={`px-5 py-7 text-center ${cardClasses}`}>
+            <li
+              key={key}
+              className={`flex items-center gap-4 p-4 text-left md:block md:px-5 md:py-7 md:text-center ${cardClasses}`}
+            >
               <span
-                className={`mx-auto mb-3.5 flex size-16 items-center justify-center rounded-full ${TONES[tone]}`}
+                className={`flex size-14 shrink-0 items-center justify-center rounded-full md:mx-auto md:mb-3.5 md:size-16 ${TONES[tone]}`}
               >
                 {customIcons?.[key] ? (
-                  <img src={customIcons[key]} alt="" loading="lazy" className="size-9" />
+                  <img src={customIcons[key]} alt="" loading="lazy" className="size-7 md:size-9" />
                 ) : (
-                  <Icon aria-hidden="true" className="size-7.5" />
+                  <Icon aria-hidden="true" className="size-6 md:size-7.5" />
                 )}
               </span>
-              <h3 className="text-lg font-semibold leading-6 text-navy-deep">{title}</h3>
-              <p className="mt-1.5 text-sm leading-5 text-muted-strong">{text}</p>
+              <div>
+                <h3 className="text-lg font-semibold leading-6 text-navy-deep">{title}</h3>
+                <p className="mt-1 text-sm leading-5 text-muted-strong md:mt-1.5">{text}</p>
+              </div>
             </li>
           ))}
         </ul>
