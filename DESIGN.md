@@ -146,6 +146,8 @@ Motion explains what changed. It is never decoration.
 
 Nothing longer than **300ms**.
 
+Exception: the landing hero entrance (section 9) may run up to **600ms** in total.
+
 ### What animates
 
 - **Buttons:** background color on hover (150ms); slight press `scale-[0.98]` on active
@@ -155,10 +157,11 @@ Nothing longer than **300ms**.
 - **Toasts:** slide in from the edge + fade; auto-dismiss after 4s
 - **Loading:** button shows a spinner and is disabled; lists show skeleton blocks with a soft pulse
 - **Status changes:** color crossfade (150ms)
+- **Landing scroll reveal (section 9 only):** a section's heading block and card grid fade up once when scrolled into view (`opacity` 0 to 1, `y` 12px to 0, 300ms, `ease-out`)
 
 ### What never animates
 
-- Page load "hero" entrances, staggered card reveals on every visit
+- Page load "hero" entrances (one exception: the landing hero, see section 9), staggered card reveals (stagger is defined in `src/lib/motion.js` but not used for cards), reveals that replay on every scroll
 - Bounce, elastic, spring overshoot, wobble
 - Infinite loops other than loading spinners/skeletons
 - Text that types itself out
@@ -168,7 +171,7 @@ Nothing longer than **300ms**.
 
 Respect the user's OS setting. With `prefers-reduced-motion: reduce`:
 
-- Remove slides and scales; keep instant or opacity-only changes
+- Remove slides and scales; keep instant or opacity-only changes (the landing scroll reveal becomes an opacity-only fade)
 - In Tailwind use `motion-safe:` for movement, e.g. `motion-safe:transition-transform`
 
 ---
@@ -223,7 +226,7 @@ The sign-in and register screens are the first thing a client sees, so they get 
 
 The public landing page is a marketing surface (visitor mode: persuade). These exceptions apply to **the landing page only** (and the auth pages where section 8 says so). The logged-in app keeps sections 1 to 5.
 
-- **Hero background image:** the hero uses one illustrated picture (`heroBackground`, sky, office house, skyline, grassy hill), shown with `background-size: cover` and `background-position: center bottom`, with a soft fade to `sky` at the bottom. The file is used as-is: no crop, recolor, filter or overlay. While `heroBackground` is `null`, a coded SVG scene (`HeroBackground.jsx`) takes its place. The hero sits under the sticky navbar (pulled up with a negative top margin). On narrow screens `cover` crops the picture, so the house may be out of view.
+- **Hero images:** two finished scenes with Pilandok and the Codehaus building baked in: `heroWide` (1792x768) from `xl` (1280px) up and `heroMobile` (1200x976) below. They are one `<picture>`, so each device downloads one file. From `xl` the wide image fills the hero (`object-cover`, anchored right-bottom) with the text on the left sky. The hero height (`min(46vw, 780px)`) and the text column (470px) keep the text clear of the palm leaves and Pilandok. Below `xl` the text comes first, then the mobile image edge to edge, with `width`/`height` set and not lazy-loaded. The files are used as-is: no crop, recolor, filter or overlay. If either image is `null`, the hero falls back to `heroBackground` / `HeroBackground.jsx`.
 - **Page background:** below the hero, sections sit on a soft `sky` / `sky-light` gradient with white cloud shapes at the left and right edges (decoration, `aria-hidden`).
 - **Gradients:** soft background gradients allowed on the hero fade, the page background (`sky` to `sky-light`) and the call-to-action panel (`primary-deep` to `primary`). Never on text, buttons or cards.
 - **Cards:** white at about 82% opacity with a white 1px border, `rounded-2xl` and a soft blue shadow (`0 10px 30px -12px rgb(37 99 235 / 0.25)`), so the sky shows through very slightly. This replaces the `line` border and `shadow-sm` of section 3 on this page only. Secondary text on cards uses `muted-strong`.
@@ -232,10 +235,11 @@ The public landing page is a marketing surface (visitor mode: persuade). These e
 - **Orange buttons:** `accent-strong` fill with white bold text (about 5.2:1, passes AA). Light `accent` is decoration only (bars, sparks, waves, paw prints), never behind white text. The word "Growth" in the H1 uses `accent-strong`: it measures about 3.8:1 over the hero picture. The lighter `#EA580C` measured about 2.6:1 there and fails the 3:1 minimum for large text.
 - **Spacing:** sections are about 96px apart on desktop (`pt-24`) and 64px on mobile (`pt-16`). Each section owns its top spacing. This is the only place the 48px scale limit is exceeded.
 - **Type:** H1 60/66 Bold and H2 40/48 Bold on desktop; both step down on mobile (H1 40/46, H2 32/40). This is bolder in size and lighter in weight than the section 2 scale (56/64 ExtraBold) on purpose, to match the approved preview.
-- **Mascot:** one per viewport (Celebrating in the hero, standing on the hill left of the house; Working with laptop in the final call-to-action, overlapping the panel's top-left edge, hidden below `md`). Both are decorative (`alt=""`).
+- **Mascot:** one per viewport. In the hero Pilandok is part of the hero image (`heroMascot` is `null`); Working with laptop in the final call-to-action, overlapping the panel's top-left edge, hidden below `md`. Both are decorative (`alt=""`).
 - **Copy:** the main button says "Start a project" and goes to `/register`. No invented client names, quotes, photos or metrics. Testimonials render only when real, permitted quotes exist (the component returns nothing while its list is empty).
 - **Portfolio:** only real projects. A "Learn More" button appears only when a project has a `url`; it opens in a new tab (`rel="noopener noreferrer"`) and has an accessible label. No dead `href="#"` links.
 - **Footer:** `navy-deep` background with a wavy top edge, the logo on a small white badge, anchor links, and a GitHub link (inline SVG, because the icon set has no brand icons). The focus ring is white on this dark background.
 - **Images:** all landing images are listed in `src/assets/landingAssets.js`. A missing image falls back to an icon or a branded placeholder.
-- **Motion:** card hover lift (`-translate-y-1`, 150ms, `motion-safe:` only) and color transitions. Smooth anchor scrolling only when reduced motion is not requested. No entrance animations.
+- **Motion:** card hover lift (`-translate-y-1`, 150ms, `motion-safe:` only) and color transitions. Smooth anchor scrolling only when reduced motion is not requested. Scroll reveal: one `<Reveal>` wrapper (`motion/react`, `whileInView`, `once: true`) fades each section's heading and card grid up once. Never on the hero or navbar, no stagger, 300ms max, `opacity` and `transform` only, opacity-only under reduced motion. Shared settings live in `src/lib/motion.js`. Hero entrance (landing hero only, once per page load): headline words rise in (opacity + `translateY` 0.4em, 60ms stagger) and the scene image fades in and settles (opacity + scale 1.02 to 1). Everything finishes within **600ms**, `ease-out`, `opacity` and `transform` only. No parallax, no floating elements, no loops. Under reduced motion both become opacity-only fades.
 - **Decoration:** clouds, waves, blobs, sparks and paw prints are inline SVG and `aria-hidden`.
+- **Glass:** landing navbar only (never dashboards, forms, auth pages or cards). Classes: `bg-white/85` + `backdrop-blur-xl` + `border-white/50` + the card shadow; solid `surface` fallback via `supports-[backdrop-filter]` and the `reduced-transparency` variant (defined in `index.css`). Nav links and the active underline and focus ring use `navy-deep`; Login keeps a solid white fill. Never on anything that animates; one glass surface on screen at most. The hero feature chips are plain `white/82` cards, not glass.

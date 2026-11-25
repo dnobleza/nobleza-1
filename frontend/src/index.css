@@ -47,6 +47,10 @@
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 }
 
+/* Tailwind 4 has no built-in variant for this OS setting, so we define one.
+   Use it like: reduced-transparency:bg-surface (only Chromium browsers support the media query). */
+@custom-variant reduced-transparency (@media (prefers-reduced-transparency: reduce));
+
 body {
   @apply bg-background text-ink antialiased;
 }
