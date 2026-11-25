@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import landingAssets from '../../assets/landingAssets';
 import { focusRing } from './focusRing';
+import Reveal from './Reveal';
 
 function CtaSection() {
   const { ctaMascot } = landingAssets;
@@ -10,6 +11,7 @@ function CtaSection() {
     <section id="contact" aria-labelledby="cta-title" className="relative pb-16 pt-16 lg:pb-24 lg:pt-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* The panel itself must NOT hide overflow: the mascot sticks out over its top edge. */}
+        <Reveal>
         <div className="relative rounded-3xl bg-linear-to-r from-primary-deep to-primary px-6 pb-24 pt-10 text-white sm:px-10 md:py-12 md:pl-[300px] lg:pl-[340px]">
           {/* Orange wave, bottom right. Its own box clips it to the panel's rounded corner. */}
           <div
@@ -64,6 +66,7 @@ function CtaSection() {
             </Link>
           </div>
         </div>
+        </Reveal>
       </div>
     </section>
   );

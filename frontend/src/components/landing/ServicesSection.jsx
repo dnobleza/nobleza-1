@@ -1,6 +1,7 @@
 import { ArrowRight, Headset, LayoutDashboard, Monitor, Palette, Settings, ShieldCheck } from 'lucide-react';
 import landingAssets from '../../assets/landingAssets';
 import SectionHeading from './SectionHeading';
+import Reveal from './Reveal';
 import { cardClasses } from './cardStyles';
 import { focusRing } from './focusRing';
 
@@ -27,7 +28,7 @@ function ServicesSection() {
     <section id="services" aria-labelledby="services-title" className="relative pt-16 lg:pt-24">
       {/* lg:grid-cols-[1fr_2fr] = two columns on desktop, the right one twice as wide. */}
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_2fr]">
-        <div>
+        <Reveal>
           <SectionHeading
             id="services-title"
             title="Our Services"
@@ -40,33 +41,35 @@ function ServicesSection() {
             Explore Services
             <ArrowRight aria-hidden="true" className="size-4.5" />
           </a>
-        </div>
+        </Reveal>
 
         {/* 1 column on phones, 2 on tablets, 3 on desktop (3 x 2 = six cards).
             Below md each card is compact: icon on the left, text on the right (flex).
             From md up it switches back to the tall, centered card (md:block, md:text-center). */}
-        <ul className="grid gap-3 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
-          {SERVICES.map(({ key, Icon, tone, title, text }) => (
-            <li
-              key={key}
-              className={`flex items-center gap-4 p-4 text-left md:block md:px-5 md:py-7 md:text-center ${cardClasses}`}
-            >
-              <span
-                className={`flex size-14 shrink-0 items-center justify-center rounded-full md:mx-auto md:mb-3.5 md:size-16 ${TONES[tone]}`}
+        <Reveal>
+          <ul className="grid gap-3 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
+            {SERVICES.map(({ key, Icon, tone, title, text }) => (
+              <li
+                key={key}
+                className={`flex items-center gap-4 p-4 text-left md:block md:px-5 md:py-7 md:text-center ${cardClasses}`}
               >
-                {customIcons?.[key] ? (
-                  <img src={customIcons[key]} alt="" loading="lazy" className="size-7 md:size-9" />
-                ) : (
-                  <Icon aria-hidden="true" className="size-6 md:size-7.5" />
-                )}
-              </span>
-              <div>
-                <h3 className="text-lg font-semibold leading-6 text-navy-deep">{title}</h3>
-                <p className="mt-1 text-sm leading-5 text-muted-strong md:mt-1.5">{text}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <span
+                  className={`flex size-14 shrink-0 items-center justify-center rounded-full md:mx-auto md:mb-3.5 md:size-16 ${TONES[tone]}`}
+                >
+                  {customIcons?.[key] ? (
+                    <img src={customIcons[key]} alt="" loading="lazy" className="size-7 md:size-9" />
+                  ) : (
+                    <Icon aria-hidden="true" className="size-6 md:size-7.5" />
+                  )}
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold leading-6 text-navy-deep">{title}</h3>
+                  <p className="mt-1 text-sm leading-5 text-muted-strong md:mt-1.5">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

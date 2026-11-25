@@ -10,12 +10,20 @@
 // and shows a fallback instead (an icon, or a branded placeholder card).
 
 import pilandokWorking from './mascot/pilandok-working.webp';
-import pilandokCelebrating from './mascot/pilandok-celebrating.webp';
 import heroBackgroundImage from './landing/hero-background.webp';
+import heroWideImage from './landing/hero-wide.webp';
+import heroMobileImage from './landing/hero-mobile.webp';
+import metalMarketLogo from './landing/metal-market-logo.webp';
 
 const landingAssets = {
-  // Big mascot in the hero (right side).
-  heroMascot: pilandokCelebrating,
+  // Separate hero mascot. null on purpose: Pilandok is already inside the hero images
+  // (one mascot per viewport). Only used by the old fallback hero.
+  heroMascot: null,
+  // Finished hero scenes (Pilandok and the Codehaus building are part of the picture).
+  // heroWide: 1792x768, used from 1280px up. heroMobile: 1200x976, used below 1280px.
+  // If either is null, the hero falls back to the old look (heroBackground + HeroBackground.jsx).
+  heroWide: heroWideImage,
+  heroMobile: heroMobileImage,
   // Mascot on the left edge of the final call-to-action panel.
   ctaMascot: pilandokWorking,
   // Full illustrated hero background (sky, office house, skyline, hill, clouds).
@@ -30,7 +38,13 @@ const landingAssets = {
   serviceIcons: null,
   featureIcons: null,
 
-  // Project screenshots. While null, the card shows a branded placeholder.
+  // Project logos (512x512, transparent background). Shown on the dark panel of a project card.
+  projectLogos: {
+    metalMarket: metalMarketLogo,
+  },
+
+  // Project screenshots. While null, the card shows the logo panel instead.
+  // If you set one, the screenshot replaces the logo on the card.
   projectImages: {
     gvnSafeStart: null,
     metalMarket: null,

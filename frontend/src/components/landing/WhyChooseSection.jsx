@@ -1,6 +1,7 @@
 import { CodeXml, Headphones, Rocket, TrendingUp } from 'lucide-react';
 import landingAssets from '../../assets/landingAssets';
 import SectionHeading from './SectionHeading';
+import Reveal from './Reveal';
 import { cardClasses } from './cardStyles';
 
 // "key" matches the names you can use in landingAssets.featureIcons.
@@ -23,33 +24,37 @@ function WhyChooseSection() {
   return (
     <section id="why-choose" aria-labelledby="why-title" className="relative pt-16 lg:pt-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <SectionHeading
-          id="why-title"
-          title="Why Choose CodeHaus?"
-          subtitle="We combine creativity, technology, and reliability to help your business thrive."
-          centered
-        />
+        <Reveal>
+          <SectionHeading
+            id="why-title"
+            title="Why Choose CodeHaus?"
+            subtitle="We combine creativity, technology, and reliability to help your business thrive."
+            centered
+          />
+        </Reveal>
 
         {/* 1 column on phones, 2 on tablets, 4 on desktop. */}
-        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map(({ key, Icon, tone, title, text }) => (
-            <li key={key} className={`flex items-center gap-3.5 p-5 ${cardClasses}`}>
-              <span
-                className={`flex size-14 shrink-0 items-center justify-center rounded-full ${TONES[tone]}`}
-              >
-                {customIcons?.[key] ? (
-                  <img src={customIcons[key]} alt="" loading="lazy" className="size-8" />
-                ) : (
-                  <Icon aria-hidden="true" className="size-6" />
-                )}
-              </span>
-              <div>
-                <h3 className="text-lg font-semibold leading-6 text-navy-deep">{title}</h3>
-                <p className="mt-0.5 text-sm text-muted-strong">{text}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <Reveal className="mt-10">
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURES.map(({ key, Icon, tone, title, text }) => (
+              <li key={key} className={`flex items-center gap-3.5 p-5 ${cardClasses}`}>
+                <span
+                  className={`flex size-14 shrink-0 items-center justify-center rounded-full ${TONES[tone]}`}
+                >
+                  {customIcons?.[key] ? (
+                    <img src={customIcons[key]} alt="" loading="lazy" className="size-8" />
+                  ) : (
+                    <Icon aria-hidden="true" className="size-6" />
+                  )}
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold leading-6 text-navy-deep">{title}</h3>
+                  <p className="mt-0.5 text-sm text-muted-strong">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

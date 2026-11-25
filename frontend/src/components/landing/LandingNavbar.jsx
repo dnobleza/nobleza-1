@@ -13,7 +13,7 @@ const NAV_LINKS = [
 
 // Shared look for keyboard focus (the ring you see when you press Tab).
 const focusRing =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-deep';
 
 function LandingNavbar() {
   // useState remembers a value between renders.
@@ -75,7 +75,7 @@ function LandingNavbar() {
   function linkClasses(id) {
     const isActive = id === activeId;
     return `relative rounded-full px-3 py-2 text-base font-medium transition-colors duration-150 ${focusRing} ${
-      isActive ? 'text-primary' : 'text-ink hover:text-primary'
+      isActive ? 'font-semibold text-navy-deep' : 'text-navy-deep hover:text-primary-deep'
     }`;
   }
 
@@ -84,7 +84,7 @@ function LandingNavbar() {
       <div className="mx-auto max-w-6xl">
         <nav
           aria-label="Main"
-          className="flex items-center justify-between gap-4 rounded-full bg-surface px-4 py-3 shadow-md sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr]"
+          className="flex items-center justify-between gap-4 rounded-full border border-white/50 bg-surface px-4 py-3 shadow-[0_10px_30px_-12px_rgb(37_99_235/0.25)] supports-[backdrop-filter]:bg-white/85 supports-[backdrop-filter]:backdrop-blur-xl reduced-transparency:bg-surface reduced-transparency:backdrop-blur-none sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr]"
         >
           <a href="#home" className={`ml-2 shrink-0 justify-self-start rounded-full lg:ml-4 ${focusRing}`}>
             {/* Sized by height so the bar stays about 64px tall; width follows the logo's shape. */}
@@ -110,7 +110,7 @@ function LandingNavbar() {
                   {link.id === activeId && (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-primary"
+                      className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-navy-deep"
                     />
                   )}
                 </a>
@@ -122,7 +122,7 @@ function LandingNavbar() {
             {/* Desktop buttons */}
             <Link
               to="/login"
-              className={`hidden rounded-full border border-primary px-6 py-2 text-base font-semibold text-primary transition-colors duration-150 hover:bg-primary-soft lg:inline-block ${focusRing}`}
+              className={`hidden rounded-full border border-primary bg-surface px-6 py-2 text-base font-semibold text-primary transition-colors duration-150 hover:bg-primary-soft hover:text-primary-deep lg:inline-block ${focusRing}`}
             >
               Login
             </Link>
@@ -178,7 +178,7 @@ function LandingNavbar() {
           <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4 sm:flex-row">
             <Link
               to="/login"
-              className={`rounded-full border border-primary px-6 py-3 text-center text-base font-semibold text-primary transition-colors duration-150 hover:bg-primary-soft sm:flex-1 ${focusRing}`}
+              className={`rounded-full border border-primary px-6 py-3 text-center text-base font-semibold text-primary transition-colors duration-150 hover:bg-primary-soft hover:text-primary-deep sm:flex-1 ${focusRing}`}
             >
               Login
             </Link>
