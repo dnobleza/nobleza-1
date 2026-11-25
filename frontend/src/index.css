@@ -22,8 +22,11 @@
 
   /* Landing page only (see DESIGN.md section 9) */
   --color-navy-deep: #0b2a6b;
+  /* Hero only: sits behind the pale top of the mobile hero image */
   --color-sky: #eaf3ff;
-  --color-sky-light: #f5f9ff;
+  /* Section background below the hero, and the card/chip border that stands out on it */
+  --color-surface-cool: #e9eef5;
+  --color-line-cool: #c9d3e0;
   /* Secondary text on tinted/blue backgrounds (AA-safe; muted is borderline there) */
   --color-muted-strong: #4b5563;
 

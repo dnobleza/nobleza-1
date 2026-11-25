@@ -2,6 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import landingAssets from '../../assets/landingAssets';
 import SectionHeading from './SectionHeading';
 import Reveal from './Reveal';
+import { cardClasses } from './cardStyles';
 import { focusRing } from './focusRing';
 
 // Only real projects. To add one: add an entry here, and put its images in landingAssets.js
@@ -32,7 +33,7 @@ function ProjectCard({ project, wide }) {
 
   return (
     <li
-      className={`${cardLayout} overflow-hidden rounded-2xl border border-white bg-white/82 shadow-[0_10px_30px_-12px_rgb(37_99_235/0.25)] duration-150 motion-safe:transition-transform motion-safe:hover:-translate-y-1`}
+      className={`${cardLayout} overflow-hidden ${cardClasses}`}
     >
       {/* Image side. A dark ink panel: a real screenshot if one is set, otherwise the logo
           with the tags under it, otherwise just the project name. */}

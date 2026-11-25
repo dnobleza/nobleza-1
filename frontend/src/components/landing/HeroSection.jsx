@@ -23,7 +23,7 @@ function FeatureList({ className }) {
       {MINI_FEATURES.map(({ Icon, lines }) => (
         <li
           key={lines[0]}
-          className="flex items-center gap-2 rounded-2xl border border-white bg-white/82 px-3 py-2 shadow-[0_10px_30px_-12px_rgb(37_99_235/0.25)]"
+          className="flex items-center gap-2 rounded-2xl border border-line-cool bg-surface px-3 py-2 shadow-[0_12px_32px_-12px_rgb(15_23_42/0.28)]"
         >
           <Icon aria-hidden="true" className="size-5.5 shrink-0 text-primary-deep" />
           <span>
