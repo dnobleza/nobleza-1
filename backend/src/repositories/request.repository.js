@@ -121,4 +121,14 @@ async function findHistory(requestId) {
   return result.rows.map(toHistoryEntry);
 }
 
-module.exports = { create, insertHistory, findByClient, findByIdForClient, findHistory };
+// DETAIL_COLUMNS, LAST_STEP and toDetail are shared with adminRequest.repository.js.
+module.exports = {
+  create,
+  insertHistory,
+  findByClient,
+  findByIdForClient,
+  findHistory,
+  DETAIL_COLUMNS,
+  LAST_STEP,
+  toDetail,
+};
