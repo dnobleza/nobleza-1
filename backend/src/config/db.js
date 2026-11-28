@@ -13,4 +13,21 @@ function query(text, params) {
   return pool.query(text, params);
 }
 
-module.exports = { pool, query };
+// Runs work(client) as one transaction: either every query in it is saved, or none of them.
+// All those queries must use the client passed in, because a transaction lives on one connection.
+async function withTransaction(work) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await work(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release(); // always give the connection back to the pool
+  }
+}
+
+module.exports = { pool, query, withTransaction };

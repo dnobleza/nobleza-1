@@ -85,6 +85,48 @@ describe('POST /api/v1/auth/login - success', () => {
   });
 });
 
+describe('POST /api/v1/auth/login - role in the token', () => {
+  // Checks the signature, then returns what is inside the token.
+  function decode(token) {
+    return jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+  }
+
+  async function roleInDatabase(email) {
+    const result = await pool.query('SELECT role FROM users WHERE email = $1', [email]);
+    return result.rows[0].role;
+  }
+
+  it.each(['client', 'admin'])('puts the database role in the token for a %s', async (role) => {
+    // Registering always makes a client, so set the role directly in the database before login.
+    await pool.query('UPDATE users SET role = $1 WHERE email = $2', [role, EMAIL]);
+
+    const response = await login(EMAIL);
+
+    expect(response.status).toBe(200);
+    expect(await roleInDatabase(EMAIL)).toBe(role);
+    expect(decode(response.body.token).role).toBe(await roleInDatabase(EMAIL));
+  });
+
+  it('gives a client token after registering with role "admin" in the body', async () => {
+    const email = 'maria@example.com';
+    const registered = await request(app).post(REGISTER_URL).send({
+      name: 'Maria',
+      email,
+      mobileNumber: '09181234567',
+      password: PASSWORD,
+      confirmPassword: PASSWORD,
+      role: 'admin',
+    });
+
+    const response = await login(email);
+
+    expect(registered.status).toBe(201);
+    expect(response.status).toBe(200);
+    expect(await roleInDatabase(email)).toBe('client');
+    expect(decode(response.body.token).role).toBe('client');
+  });
+});
+
 describe('POST /api/v1/auth/login - wrong credentials', () => {
   it('returns 401 "Invalid credentials" (not 400) for a password over 72 bytes', async () => {
     // 73 ASCII chars = 73 bytes. Same 401 as any wrong password, so the policy is not revealed.

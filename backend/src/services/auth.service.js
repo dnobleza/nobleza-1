@@ -41,7 +41,8 @@ async function login({ email, mobileNumber, password }) {
     throw new UnauthorizedError(INVALID_LOGIN);
   }
 
-  return { token: signToken(credentials.user.id), user: credentials.user };
+  const token = signToken(credentials.user.id, credentials.user.role);
+  return { token, user: credentials.user };
 }
 
 // Returns the logged-in user. A valid token whose user was deleted is treated as an invalid token (401).
