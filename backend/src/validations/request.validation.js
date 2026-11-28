@@ -218,4 +218,13 @@ function validateRequestId(req, res, next) {
   next();
 }
 
-module.exports = { validateCreate, validateListQuery, validateRequestId };
+// isPlainObject, rejectText and the two patterns are shared with adminRequest.validation.js.
+module.exports = {
+  validateCreate,
+  validateListQuery,
+  validateRequestId,
+  isPlainObject,
+  rejectText,
+  NULL_CHAR,
+  UNPAIRED_SURROGATE,
+};
