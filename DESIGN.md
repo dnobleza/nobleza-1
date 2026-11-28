@@ -25,10 +25,10 @@ Colors come from the CodeHaus style guide.
 | `primary-cloud` | `#BFDBFE` | Derived (light blue)       | Auth pages: brand panel gradient, clouds             |
 | `primary-deep`  | `#1E40AF` | Derived (deep blue)        | Auth pages: deep wave (blends into `primary`)        |
 | `navy`          | `#1E3A8A` | Derived (dark blue)        | Auth pages: tagline text                             |
-| `navy-deep`     | `#0B2A6B` | Derived (very dark blue)   | Landing page only: headings, footer background       |
+| `navy-deep`     | `#0B2A6B` | Derived (very dark blue)   | Landing and app: headings; landing footer background |
 | `sky`           | `#EAF3FF` | Derived (light blue)       | Landing page only: hero background behind the mobile hero image |
-| `surface-cool`  | `#E9EEF5` | Derived (cool light gray)  | Landing page only: section background below the hero |
-| `line-cool`     | `#C9D3E0` | Derived (cool gray line)   | Landing page only: card and chip borders             |
+| `surface-cool`  | `#E9EEF5` | Derived (cool light gray)  | Landing (below the hero) and app: page background |
+| `line-cool`     | `#C9D3E0` | Derived (cool gray line)   | Landing and app: card and chip borders               |
 | `muted-strong`  | `#4B5563` | Derived (Neutral 700)      | Secondary text on tinted/blue backgrounds (AA-safe)  |
 | `ink`           | `#111111` | Style guide: Neutral 900   | Headings and main text                               |
 | `muted`         | `#6B7280` | Style guide: Neutral 600   | Secondary text, hints, placeholders                  |

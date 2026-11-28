@@ -1,6 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import GuestRoute from './components/GuestRoute';
-import ProtectedRoute from './components/ProtectedRoute';
+import RequireRole from './components/RequireRole';
+import AppLayout from './components/app/AppLayout';
+import { adminNav, clientNav } from './components/app/navConfig';
+import AdminPage from './pages/AdminPage';
 import DashboardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -28,14 +31,18 @@ function App() {
           </GuestRoute>
         }
       />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        }
-      />
+      {/* Routes without a path only wrap their children: first the guard,
+          then the shell with the sidebar and top bar. */}
+      <Route element={<RequireRole role="client" />}>
+        <Route element={<AppLayout nav={clientNav} />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
+      </Route>
+      <Route element={<RequireRole role="admin" />}>
+        <Route element={<AppLayout nav={adminNav} />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
+      </Route>
     </Routes>
   );
 }

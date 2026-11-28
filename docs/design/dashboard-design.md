@@ -22,7 +22,7 @@ The public landing page keeps its top navbar. Every logged-in page uses this she
 └──────────────┴──────────────────────────────────────────────┘
 ```
 
-- Page background: light blue (`#F5F9FF` → `#EAF3FF`) with soft white clouds at the edges, same as the landing page.
+- Page background: solid `surface-cool`, no gradient and no clouds, same as the landing page below the hero. Text straight on it uses only `ink`, `navy-deep`, `muted-strong` or `primary-deep`.
 - Build it once as `AppLayout` (sidebar + top bar + `<Outlet />`), used by client and admin pages.
 
 ### Sidebar (client)
@@ -42,7 +42,8 @@ The public landing page keeps its top navbar. Every logged-in page uses this she
 
 - Active item: `bg-primary-soft`, `text-primary-deep`, semibold, plus a 4px blue bar on the left edge. Set `aria-current="page"`.
 - Only link to pages that exist. Unbuilt pages are hidden, not shown as dead links.
-- Sidebar background: white ~92% with a soft blue shadow on the right edge.
+- Sidebar background: solid white (`surface`) with a `line-cool` right border and the neutral card shadow.
+- Desktop (lg+) only: a toggle next to the logo collapses the sidebar to a 72px icon rail (logo mark, icons only; group labels, help card and text hidden). Icon-only controls keep an `aria-label` and show a tooltip. The choice is saved in `localStorage`; default is expanded. Width animates 200ms, motion-safe. The mobile drawer is always expanded.
 
 ### Top bar
 - Left: breadcrumb (`Home / Dashboard`), current page in navy, semibold.
@@ -115,7 +116,7 @@ Mini progress (in lists): an 8px bar filled to (step ÷ 5), plus the text "Step 
 | In progress | `primary-soft` | `primary-deep` |
 | Completed | green tint (#DCFCE7) | `success-text` |
 | Cancelled | gray tint (#F3F4F6) | gray-600 |
-| Declined | red tint | `danger` |
+| Declined | white with `danger` border (a red tint fails WCAG AA) | `danger` |
 
 Pill shape, 12px semibold text. Always text, never color alone. Build once as a `StatusBadge` component.
 
@@ -138,7 +139,7 @@ All client endpoints return only the logged-in client's data (`WHERE client_id =
 
 ## 6. Card and visual rules (from DESIGN.md)
 
-- Cards: white ~88% opacity, white 1px border, `rounded-2xl` (20px), soft blue shadow `0 10px 30px -12px rgb(37 99 235/.25)`.
+- Cards: solid white (`surface`), 1px `line-cool` border, `rounded-2xl`, soft neutral shadow `0 12px 32px -12px rgb(15 23 42/.28)` (`appCardClasses`).
 - Headings: navy `#0B2A6B`, heading font. Body text `ink`, secondary text `muted-strong`.
 - Orange buttons with white text use `accent-strong` only.
 - Icon circles: blue (`primary-soft` / `primary-deep`), amber (`accent-soft` / `warning`), green, gray tints.
@@ -157,7 +158,7 @@ All client endpoints return only the logged-in client's data (`WHERE client_id =
 
 Visual target (local only): `docs/design/admin-dashboard-preview.png` / `.html`.
 
-Same `AppLayout` as the client app (sidebar + top bar + cloud background). Only users with `role = 'admin'` can open `/admin/*`; the backend enforces this with `requireRole('admin')`, the frontend route guard is only for UX.
+Same `AppLayout` as the client app (sidebar + top bar + `surface-cool` background). Only users with `role = 'admin'` can open `/admin/*`; the backend enforces this with `requireRole('admin')`, the frontend route guard is only for UX.
 
 The admin's questions are: *What's new?* and *What's stuck?*
 
