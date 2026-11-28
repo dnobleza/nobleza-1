@@ -1,9 +1,10 @@
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const ForbiddenError = require('../errors/ForbiddenError');
 const { verifyToken } = require('../utils/jwt');
 
 // Put this before a controller to make a route login-only.
 // Expects the header:  Authorization: Bearer <token>
-// On success, sets req.user = { id } and moves on. Otherwise throws a 401.
+// On success, sets req.user = { id, role } and moves on. Otherwise throws a 401.
 function requireAuth(req, res, next) {
   const header = req.headers.authorization;
   if (!header) {
@@ -30,8 +31,22 @@ function requireAuth(req, res, next) {
     throw new UnauthorizedError('Invalid token');
   }
 
-  req.user = { id: payload.sub };
+  req.user = { id: payload.sub, role: payload.role };
   next();
 }
 
-module.exports = { requireAuth };
+// Put this AFTER requireAuth to allow only one role, e.g. requireRole('admin').
+// It does not check anything itself: it builds and returns the middleware that does.
+function requireRole(role) {
+  return (req, res, next) => {
+    if (!req.user) {
+      throw new UnauthorizedError('Authentication required');
+    }
+    if (req.user.role !== role) {
+      throw new ForbiddenError('Forbidden');
+    }
+    next();
+  };
+}
+
+module.exports = { requireAuth, requireRole };

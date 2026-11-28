@@ -1,55 +1,62 @@
 # Backend Design — Project Requests (Client + Admin Dashboards)
 
-Status: proposed (2026-11-24). Pairs with `dashboard-design.md` (same folder) (the UI).
-Fits the existing backend: Express 5, plain JavaScript (CommonJS), layered folders, Postgres with node-pg-migrate, UUID ids, errors as `{ error }`, JWT with `sub` = user id.
-
-Items marked **[DECIDE]** need Dan's confirmation before building.
+Status: client create, list and detail are **built** (2026-11-28). Everything else is marked **planned**.
+Pairs with `dashboard-design.md` (same folder) (the UI).
+Fits the existing backend: Express 5, plain JavaScript (CommonJS), layered folders, Postgres with node-pg-migrate, UUID ids, errors as `{ error }`, JWT with `sub` = user id and `role`.
 
 ---
 
 ## 1. Data model
 
-### `project_requests` — one row per "Start a project" submission
+### `requests` — one row per "Start a project" submission
 | Column | Type | Rules |
 |---|---|---|
 | `id` | uuid PK | default `gen_random_uuid()` |
-| `client_id` | uuid FK → `users.id`, not null | Always set from the token (`req.user.id`), never from the body. `ON DELETE RESTRICT` |
-| `title` | text, not null | 1–120 chars, trimmed |
-| `project_type` | text, not null + CHECK | **[DECIDE]** `website`, `web_app`, `mobile_app`, `automation`, `ui_ux`, `maintenance`, `other` |
-| `description` | text, not null | 1–5,000 chars |
-| `budget_range` | text, not null + CHECK | **[DECIDE]** `below_50k`, `50k_100k`, `100k_250k`, `above_250k`, `not_sure` (PHP) |
-| `target_date` | date, nullable | must be today or later on create |
+| `client_id` | uuid FK → `users.id`, not null | Always set from the token (`req.user.id`), never from the body. `ON DELETE CASCADE` for now (see "Deleting users") |
+| `title` | text, not null | 3–120 chars, trimmed |
+| `project_type` | text, not null + CHECK | `website`, `web_app`, `mobile_app`, `automation`, `ui_ux`, `maintenance`, `api`, `other`, `not_sure` |
+| `description` | text, not null | 5–5,000 chars, trimmed |
+| `budget_range` | text, not null + CHECK | `under_50k`, `50k_100k`, `100k_250k`, `above_250k`, `not_sure` (PHP) |
+| `budget_php` | integer, nullable | 0 to 2,147,483,647 |
+| `target_deadline` | date, nullable | today or later (Asia/Manila) on create |
+| `reference_links` | text[], not null, default `{}` | at most 5, `http` or `https` only |
+| `intake_answers` | jsonb, not null, default `{}` | an object, at most 10 KB |
 | `status` | text, not null, default `submitted` + CHECK | see §2 |
 | `admin_notes` | text, nullable | **admin only — never returned to clients** |
 | `created_at` / `updated_at` | timestamptz, not null, default `now()` | |
 
-Indexes: `(client_id, updated_at DESC)` for client lists; `(status, created_at)` for admin queues.
+Indexes: `(client_id, updated_at DESC)` for client lists; `(status, updated_at)` for admin queues.
+
+Allowed values are repeated in the CHECK constraints (migration) and in `validations/request.validation.js`. Changing a list needs a new migration and a validation change.
+
+### Deleting users
+- `client_id` cascades today **only because no feature deletes users**: deleting a user row removes their requests and history.
+- **Before any account deletion feature**, move to soft delete or anonymize, so that requests, quotes and payments survive.
+- **No user delete endpoint until then.**
 
 ### `request_status_history` — the timeline / stepper dates
 | Column | Type | Rules |
 |---|---|---|
 | `id` | uuid PK | |
-| `request_id` | uuid FK → `project_requests.id`, not null | `ON DELETE CASCADE` |
+| `request_id` | uuid FK → `requests.id`, not null | `ON DELETE CASCADE` |
 | `from_status` | text, nullable | null for the first row (creation) |
 | `to_status` | text, not null | |
 | `note` | text, nullable | **visible to the client** (max 1,000 chars) |
-| `changed_by` | uuid FK → `users.id`, not null | |
+| `created_by` | uuid FK → `users.id`, not null | Deferred check (at COMMIT). A user who wrote history on someone else's request cannot be deleted |
 | `created_at` | timestamptz, not null, default `now()` | |
 
-Index: `(request_id, created_at)`. A history row is written on create (`null → submitted`) and on every status change.
+Index: `(request_id, created_at)`. A history row is written on create (`null → submitted` or `null → draft`), in the same transaction as the request. Every later status change must write one too.
 
 ---
 
-## 2. Status workflow **[DECIDE]**
+## 2. Status workflow
 
-```
-submitted ──► in_review ──► quoted ──► in_progress ──► completed
-    │              │           │
-    └── cancelled ◄┘           └──► declined
-   (client)                     (admin, before in_progress)
-```
+Statuses: `draft`, `submitted`, `in_review`, `quoted`, `in_progress`, `completed`, `cancelled`, `declined`.
 
-| From | Client may move to | Admin may move to |
+- A request starts as `submitted`, or as `draft` when created with `draft: true`. Submitting or editing a draft is **planned**.
+- Status changes are **planned** (no endpoint changes a status yet).
+
+| From | Client may move to (planned) | Admin may move to (planned) |
 |---|---|---|
 | `submitted` | `cancelled` | `in_review`, `declined` |
 | `in_review` | `cancelled` | `quoted`, `declined` |
@@ -57,58 +64,88 @@ submitted ──► in_review ──► quoted ──► in_progress ──► c
 | `in_progress` | — | `completed` |
 | `completed` / `cancelled` / `declined` | — | — (final) |
 
-- Rules live in one place: `services/request.service.js` (a transitions map). Any other move → `409 { error: "Can't move a request from X to Y" }`.
-- Status update + history row happen in **one database transaction**.
-- Quotes: **[DECIDE]** by email for now — "Quoted" is only a status label; no amount stored yet.
+- Any other move → `409 { error: "Can't move a request from X to Y" }`.
+- The admin transition table will live in one module, `utils/requestTransitions.js`.
+- Status update and history row happen in **one database transaction**, with the row locked (`SELECT ... FOR UPDATE`).
+- Quotes are by email for now: "Quoted" is only a status label; no amount is stored.
+
+**`lastStep`** (in list and detail): the furthest step ever reached according to history. `submitted` 1, `in_review` 2, `quoted` 3, `in_progress` 4, `completed` 5, none (draft) 0.
 
 ---
 
 ## 3. Endpoints
 
-All under `/api/v1`. All require `requireAuth`. Admin routes also require `requireRole('admin')`.
+All under `/api/v1`. All require a token.
 
-### Client
+### Client (built) — `requireRole('client')`, so an admin gets 403
+
+#### `POST /requests` → `201 { request }`
+Body: `{ title, projectType, description, budgetRange, budgetPhp?, targetDeadline?, referenceLinks?, intakeAnswers?, draft? }`
+- Any other field → `400 Unknown field: <name>`.
+- Text containing a null character or an unpaired surrogate → 400.
+- `targetDeadline` is `YYYY-MM-DD`.
+
+`request`: `{ id, title, projectType, description, budgetRange, budgetPhp, targetDeadline, referenceLinks, intakeAnswers, status, createdAt, updatedAt }`
+
+#### `GET /requests?limit=&active=` → `200 { requests }`
+- Only the caller's requests, newest update first.
+- `limit`: whole number 1–50, default 20, otherwise `400 limit must be a whole number from 1 to 50`.
+- `active`: `true` keeps `submitted`, `in_review`, `quoted`, `in_progress`; `false` (default) keeps all.
+- Other query parameters are ignored. There is no paging yet.
+
+Each item: `{ id, title, projectType, budgetRange, budgetPhp, targetDeadline, status, createdAt, updatedAt, lastStep }`
+
+#### `GET /requests/:id` → `200 { request }`
+- The create fields plus `lastStep` and `history` (oldest first): `{ id, fromStatus, toStatus, note, createdAt }`.
+- Someone else's or missing → `404 Request not found`. Not a UUID → 400.
+
+### Client (planned)
 | Method | Path | Notes |
 |---|---|---|
-| POST | `/requests` | Body: `{ title, projectType, description, budgetRange, targetDate? }` → `201 { request }`. `client_id` from token. |
-| GET | `/requests?status=&page=&limit=` | Only the caller's requests, newest update first. `limit` max 50. Returns `{ requests, page, total }`. |
-| GET | `/requests/:id` | Own request + history (oldest first). Someone else's → **404**. |
-| PATCH | `/requests/:id/cancel` | Own request, only from `submitted` / `in_review` → `200 { request }`, else 409. |
-| GET | `/dashboard/summary` | `{ counts: { submitted, in_review, quoted, in_progress, completed, cancelled, declined }, active, total, recentUpdates: [...5] }` |
+| PATCH | `/requests/:id/cancel` | Own request, only from `submitted` / `in_review`, else 409. |
+| GET | `/dashboard/summary` | `{ counts, active, total, recentUpdates }` |
 
-### Admin
+### Admin (planned) — `requireRole('admin')`, so a client gets 403
 | Method | Path | Notes |
 |---|---|---|
-| GET | `/admin/requests?status=&search=&sort=&page=&limit=` | All requests + client `{ id, name, email }`. `search` matches title or client name (ILIKE, parameterized). |
-| GET | `/admin/requests/:id` | Full detail incl. `adminNotes`, client contact, history. |
-| PATCH | `/admin/requests/:id/status` | Body `{ status, note? }`. Validates the transition; writes history in a transaction. |
-| PATCH | `/admin/requests/:id/notes` | Body `{ adminNotes }` (max 5,000). |
-| GET | `/admin/dashboard/summary` | Counts by status, `newCount` (submitted), `dueThisWeek` (in_progress with target_date ≤ 7 days). |
-| GET | `/admin/activity?limit=` | Latest history rows across all requests, with request title and client name. |
+| GET | `/admin/requests?status=&search=&sort=&page=&pageSize=` | All except drafts, with client `{ id, name, email }`. Returns `{ items, page, pageSize, total }`. `pageSize` default 20, max 50. `sort=newest` or `oldest`, by `updated_at`. |
+| GET | `/admin/requests/:id` | Full detail including `adminNotes`, client contact, history with author. |
+| PATCH | `/admin/requests/:id/status` | `{ status, note? }`, see §2. |
+| PATCH | `/admin/requests/:id/notes` | `{ adminNotes }` (max 5,000). Writes no history and leaves `updated_at` unchanged. |
+| GET | `/admin/dashboard/summary` | Counts by status, `newCount`, `dueThisWeek`. |
+| GET | `/admin/activity?limit=` | Latest history rows across all requests. |
 
 ### Responses
-- camelCase JSON (`projectType`, `budgetRange`, `targetDate`, `createdAt`), matching the existing `toUser()` style.
-- Client responses use a **client-safe column list without `admin_notes`** (same idea as `SAFE_COLUMNS` for passwords).
-- Errors: `{ error }` with 400 (validation), 401, 403 (not admin), 404 (not found / not yours), 409 (invalid transition).
+- camelCase JSON.
+- Client queries use column lists **without `admin_notes`** (same idea as `SAFE_COLUMNS` for passwords).
+- Errors: `{ error }` with 400 (validation), 401, 403 (wrong role), 404 (not found / not yours), 409 (invalid transition, planned), 413 (body too large).
 
 ---
 
-## 4. Folder layout (existing layered structure)
+## 4. Code layout
 
 ```
 backend/src/
-├── db/migrations/       <ts>_create-project-requests.js, <ts>_create-request-status-history.js
-├── middlewares/         requireRole.js
-├── validations/         request.validation.js
-├── repositories/        request.repository.js, requestHistory.repository.js
-├── services/            request.service.js        (transition rules, transactions)
-├── controllers/         request.controller.js, admin.controller.js
-└── routes/              request.routes.js, dashboard.routes.js, admin.routes.js  (mounted in routes/index.js)
+├── config/db.js                  pool, query(), withTransaction()
+├── db/migrations/                1795855247441_create-requests.js (both tables)
+├── errors/ForbiddenError.js
+├── middlewares/auth.middleware.js   requireAuth, requireRole
+├── validations/request.validation.js
+├── repositories/request.repository.js   all SQL for both tables
+├── services/request.service.js
+├── controllers/request.controller.js
+└── routes/request.routes.js         mounted at /requests in routes/index.js
 ```
 
-### `requireRole(role)`
-- Runs after `requireAuth`. Looks the role up in the database by `req.user.id` (the token only carries `sub`), so demoting a user takes effect immediately.
-- Wrong role → `403 { error: "Forbidden" }`. Missing user → `401`.
+### `requireAuth` and `requireRole(role)`
+- `requireAuth` sets `req.user = { id, role }` from the token.
+- `requireRole` runs after it and compares the role **from the token**; it does not query the database.
+- So a role change takes effect at the next login. With `JWT_EXPIRES_IN=1h`, a demoted admin keeps access for at most 1 hour.
+- Tokens issued before roles were added have no role and get 403 until the user logs in again.
+- Wrong or missing role → `403 { error: "Forbidden" }`. Not logged in → 401.
+
+### `withTransaction(work)`
+`BEGIN`, run `work(client)`, `COMMIT`. Any error → `ROLLBACK`. The connection is released either way. Queries inside must use the given client.
 
 ---
 
@@ -117,37 +154,40 @@ backend/src/
 - Ownership is enforced **in SQL**: `WHERE id = $1 AND client_id = $2`. Never fetch then compare in JS.
 - Another client's request → **404**, not 403 (don't reveal it exists).
 - `:id` validated as a UUID → 400 instead of a database error.
-- All queries parameterized; `search` uses `ILIKE $n` with escaped `%` / `_`.
+- All queries parameterized. Planned admin `search` uses `ILIKE $n` with escaped `%` / `_`.
 - `admin_notes` never in any client response (tested).
-- Rate limit `POST /requests` (e.g. 10 per day per user) — with the planned `express-rate-limit` work.
+- Register ignores `role` in the body; every new account is a `client`.
+- Planned: rate limit `POST /requests` with the `express-rate-limit` work.
 - Request body size stays limited (existing `express.json()` default).
 
 ---
 
 ## 6. Tests (Jest + supertest, `codehaus_test` database)
 
-- Create: valid → 201 with `client_id` = caller; `client_id`/`status` in the body are ignored; each validation rule → 400; creates exactly one history row.
-- Ownership: client A can't GET, list or cancel client B's request (404); lists only contain own rows.
-- Roles: client on any `/admin/*` → 403; no token → 401; admin → 200.
-- Transitions: every allowed move works; disallowed moves → 409 and **no** history row; cancel after `quoted` → 409.
-- Transaction: if the history insert fails, the status is not changed.
-- `admin_notes` never appears in any client response (create, list, detail, cancel, summary).
-- Pagination, status filter and search return the right rows and totals.
-- Summary counts match the seeded data.
+Built:
+- `requests.test.js`: create, validation, list, `lastStep`, detail, ownership, roles, no `admin_notes`.
+- `requests.enums.test.js`: every project type and budget range accepted; unknown rejected.
+- `request.validation.test.js`: limit, cleaned body, refused text, UUID (no database).
+- `request.service.test.js`: a failed history insert saves nothing; the connection is released.
+- `auth.middleware.test.js`, `auth.login.test.js`: role in the token and `requireRole`.
+
+Planned with the admin API: every allowed and blocked transition, two simultaneous changes, notes, admin list paging, filter and search, client-on-admin 403.
 
 ---
 
-## 7. Build order (one branch + PR each)
+## 7. Build order
 
-1. `feature/requests-schema`: both migrations + `requireRole` + tests.
-2. `feature/requests-client-api`: create, list, detail + tests.
-3. `feature/requests-cancel-history`: cancel + history in detail + tests.
-4. `feature/requests-admin-api`: admin list, detail, status change, notes + tests.
-5. `feature/dashboard-summaries`: client summary, admin summary, admin activity + tests.
-6. Frontend (see `dashboard-design.md` §9).
+1. **Done:** schema, `requireRole`, client create, list, detail.
+2. Admin list, detail, status change, notes.
+3. Client cancel.
+4. Dashboard summaries and admin activity.
+5. Frontend (see `dashboard-design.md` §9).
 
 ## 8. Open decisions
 
-1. Project types list (§1).
-2. Budget ranges in PHP (§1).
-3. Status names and workflow (§2); quotes by email for now?
+None for the built endpoints.
+
+## 9. Follow-ups
+
+- **Auth validation accepts the null character and unpaired surrogates** in text fields. A null character cannot be stored by Postgres, so it should be a 400. Request validation already rejects both; fix `validations/auth.validation.js` in its own branch.
+- **Frontend** (when it is connected to these endpoints): add labels for `api` and `not_sure`; `data/dashboardSample.js` uses `targetDate` (now `targetDeadline`), `below_50k` (now `under_50k`) and `page` / `total` on the client list (not returned).
